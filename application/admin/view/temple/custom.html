@@ -1,0 +1,223 @@
+﻿<style>
+    body{
+        height:100%;
+        width:100%;
+    }
+
+    .hinnn-layout, .hinnn-layout * {
+        box-sizing: border-box;
+    }
+
+    
+    .hinnn-layout {
+        display: flex;
+        flex: auto;
+        flex-direction: column;
+    
+    }
+        .hinnn-layout.hinnn-layout-has-sider {
+            flex-direction: row;
+        }
+
+    .hinnn-layout-sider {
+        display: flex;
+        flex-direction: row;
+        position: relative;
+    }
+
+    .hinnn-layout-content {
+        flex: auto;
+    }
+
+    .hinnn-header {
+        position: relative;
+    
+        z-index: 1030;
+        display: block;
+    }
+
+
+    .wrapper {
+        min-height: 100%;
+    }
+
+    .height-100-per {
+        height: 100%;
+    }
+</style>
+<div class="wrapper">
+    <layout class="layout hinnn-layout hinnn-layout-has-sider height-100-per" style="background:#fff;">
+        
+        <content class="hinnn-layout-content" style="border-left:1px solid #e8e8e8;">
+            <div class="container-fluid height-100-per print-content" style="overflow: hidden; outline: none;" tabindex="1">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-3 col-md-2" style="padding-right:0px;">
+
+                                <div class="rect-printElement-types hiprintEpContainer">
+                                    <ul class="hiprint-printElement-type">
+
+                                        <li>
+                                            <span class="title"><code>拖拽列表</code></span>
+                                            <ul>
+                                                <li>
+                                                    <a class="ep-draggable-item" tid="testModule.text" >
+
+                                                        <span class="glyphicon glyphicon-text-width" aria-hidden="true"></span>
+                                                        <span class="glyphicon-class">文本</span>
+                                                    </a>
+                                                </li>
+
+                                                <li>
+                                                    <a class="ep-draggable-item" tid="testModule.image" >
+                                                        <span class="glyphicon glyphicon-picture" aria-hidden="true"></span>
+                                                        <span class="glyphicon-class">图片</span>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="ep-draggable-item" tid="testModule.longText">
+                                                        <span class="glyphicon glyphicon-subscript" aria-hidden="true"></span>
+                                                        <span class="glyphicon-class">长文</span>
+
+
+                                                    </a>
+                                                </li>
+                                                
+                                                <li>
+                                                    <a class="ep-draggable-item" tid="testModule.tableCustom" >
+                                                        <span class="glyphicon glyphicon-th" aria-hidden="true"></span>
+                                                        <span class="glyphicon-class">表格</span>
+                                                    </a>
+                                                </li>
+
+                                                <li>
+                                                    <a class="ep-draggable-item" tid="testModule.html" >
+                                                        <span class="glyphicon glyphicon-header" aria-hidden="true"></span>
+                                                        <span class="glyphicon-class">html</span>
+                                                    </a>
+                                                </li>
+
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <span class="title">辅助</span>
+                                            <ul>
+                                                <li>
+                                                    <a class="ep-draggable-item" tid="testModule.hline" >
+
+                                                        <span class="glyphicon glyphicon-resize-horizontal" aria-hidden="true"></span>
+                                                        <span class="glyphicon-class">横线</span>
+                                                    </a>
+                                                </li>
+
+                                                <li>
+                                                    <a class="ep-draggable-item" tid="testModule.vline" >
+                                                        <span class="glyphicon glyphicon-resize-vertical" aria-hidden="true"></span>
+                                                        <span class="glyphicon-class">竖线</span>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="ep-draggable-item" tid="testModule.rect">
+                                                        <span class="glyphicon glyphicon-unchecked" aria-hidden="true"></span>
+                                                        <span class="glyphicon-class">矩形</span>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="ep-draggable-item" tid="testModule.oval">
+                                                        <span class="glyphicon glyphicon-record" aria-hidden="true"></span>
+                                                        <span class="glyphicon-class">椭圆</span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                            </div>
+                            <div class="col-sm-9 col-md-10">
+                                <div class="hiprint-toolbar" style="margin-top:15px;margin-bottom:25px;">
+                                    <ul>
+                                        <li><a class="hiprint-toolbar-item" onclick="setPaper('A3')">A3</a></li>
+                                        <li><a class="hiprint-toolbar-item" onclick="setPaper('A4')">A4</a></li>
+                                        <li><a class="hiprint-toolbar-item" onclick="setPaper('A5')">A5</a></li>
+                                        <li><a class="hiprint-toolbar-item" onclick="setPaper('B3')">B3</a></li>
+                                        <li><a class="hiprint-toolbar-item" onclick="setPaper('B4')">B4</a></li>
+                                        <li><a class="hiprint-toolbar-item" onclick="setPaper('B5')">B5</a></li>
+                                        
+                                        <li><a class="hiprint-toolbar-item"><input type="text" id="customWidth" style="width: 50px;height: 19px;border: 0px;" placeholder="宽/mm"></a></li>
+                                        <li><a class="hiprint-toolbar-item"><input type="text" id="customHeight" style="width: 50px;height: 19px;border: 0px;" placeholder="高/mm"></a></li>
+
+                                        <li><a class="hiprint-toolbar-item" onclick="setPaper($('#customWidth').val(),$('#customHeight').val())">自定义</a></li>
+                                        <li><a class="hiprint-toolbar-item" onclick="rotatePaper()">旋转</a></li>
+                                        <li><a class="hiprint-toolbar-item" onclick="clearTemplate()">清空</a></li>
+                                        
+                                        <li>
+                                            <a class="btn hiprint-toolbar-item " style="color: #fff;
+        background-color: #d9534f;
+        border-color: #d43f3a;" id="A4_preview">快速预览</a>
+                                        </li>
+                                        <li>
+                                            <a id="A4_directPrint" class="btn hiprint-toolbar-item " style="color: #fff;
+        background-color: #d9534f;
+        border-color: #d43f3a;">打印</a>
+                                        </li>
+                                        <li>
+                                            <a id="A4_topdf" class="btn hiprint-toolbar-item " style="color: #fff;
+        background-color: #d9534f;
+        border-color: #d43f3a;">导出pdf</a>
+                                        </li>
+
+                                    </ul>
+                                    <div style="clear:both;"></div>
+                                </div>
+
+                                <div id="hiprint-printTemplate" class="hiprint-printTemplate"></div>
+                                <div style="padding-top:15px;">
+                                    <button type="button" class="btn btn-primary" id="A4_getJson_toTextarea">生成json到textarea</button>
+                                    <button type="button" class="btn btn-primary" id="A4_getJson_toDesign">生成打印设计 json to 模板 </button>
+                                </div>
+                                <div class="hinnn-callout hinnn-callout-danger">
+                                    <p><code>可视化</code>结果以Json的形式存在，用户可以<code>编辑Json</code>实现特殊化操作，如：数据<code>formatter</code>，<code>文本变色</code>,单元格<code>改变背景</code>等。具体请参考文档。</p>
+                                </div>
+                                <textarea class="form-control" rows="10" id="A4_textarea_json"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </content>
+        <sider class="hinnn-layout-sider" >
+            <div class="container height-100-per" style="width:250px;">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id="PrintElementOptionSetting" style="margin-top:10px;"></div>
+                    </div>
+                </div>
+            </div>
+        </sider>
+    </layout>
+
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog modal-lg" role="document" style="display: inline-block; width: auto;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title" id="myModalLabel">打印预览</h4>
+                </div>
+
+                <div class="modal-body">
+                    <button type="button" class="btn btn-danger" id="A4_printByHtml">直接打印</button>
+                    <span id="printerlist"></span>
+                    <div class="prevViewDiv"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

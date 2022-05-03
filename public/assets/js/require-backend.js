@@ -51,9 +51,26 @@ require.config({
         'selectpage': '../libs/fastadmin-selectpage/selectpage',
         'citypicker': '../libs/fastadmin-citypicker/dist/js/city-picker.min',
         'citypicker-data': '../libs/fastadmin-citypicker/dist/js/city-picker.data',
+        // hiprint
+        'hpbundle':'../libs/hiprint/hiprint.bundle',
+        'hppolyfill':'../libs/hiprint/polyfill.min',
+        'hpphiwprint':'../libs/hiprint/plugins/jquery.hiwprint',
+        // '               /libs/hiprint/plugins/query.hiwprint.js'
+        'hppminicolors':'../libs/hiprint/plugins/jquery.minicolors.min',
+        'hpjq':'../libs/hiprint/plugins/jq-3.31',
+        'socketio':'../libs/hiprint/plugins/socket.io',
+        'qrcode':'../libs/hiprint/plugins/qrcode',
+        'JsBarcode':'../libs/hiprint/plugins/JsBarcode.all.min',
+        'canvas2image':'../libs/hiprint/plugins/jspdf/canvas2image',
+        // 'canvg':'../libs/hiprint/plugins/jspdf/canvg.min',
+        'html2canvas':'../libs/hiprint/plugins/jspdf/html2canvas.min',
+        'jspdf':'../libs/hiprint/plugins/jspdf/jspdf.min',
+        'customElementTypeProvider': '../libs/hiprint/custom_test/custom-etype-provider',
+        'customPrintJson': '../libs/hiprint/custom_test/custom-print-json'
     },
     // shim依赖配置
     shim: {
+        'hpbundle':['customElementTypeProvider', 'html2canvas','jspdf','hppolyfill','hppminicolors','hpphiwprint','css!../libs/hiprint/css/hiprint.css','css!../libs/hiprint/css/print-lock.css'],
         'addons': ['backend'],
         'bootstrap': ['jquery'],
         'bootstrap-table': {
