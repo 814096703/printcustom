@@ -70,7 +70,7 @@ require.config({
     },
     // shim依赖配置
     shim: {
-        'hpbundle':['customElementTypeProvider', 'html2canvas','jspdf','hppolyfill','hppminicolors','hpphiwprint','css!../libs/hiprint/css/hiprint.css','css!../libs/hiprint/css/print-lock.css'],
+        'hpbundle':['customElementTypeProvider','qrcode','html2canvas','jspdf','hppolyfill','hppminicolors','hpphiwprint','css!../libs/hiprint/css/hiprint.css','css!../libs/hiprint/css/print-lock.css'],
         'addons': ['backend'],
         'bootstrap': ['jquery'],
         'bootstrap-table': {

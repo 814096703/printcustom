@@ -43,6 +43,15 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
         },
         add: function () {
             Controller.api.bindevent();
+            $('#designTemple').click(function () {
+                window.top.Fast.api.open('temple/custom', '模板设计', {
+                    area: ["100%", "100%"],
+                    callback:function(value){
+                        console.log('value', value);
+                        $("#c-jsondata").attr('value', value);
+                    }
+                });
+            });
         },
         edit: function () {
             Controller.api.bindevent();
@@ -128,6 +137,10 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
                 })
                 return ul;
             }
+
+            $("#save").click(function () {
+                Fast.api.close(JSON.stringify(hiprintTemplate.getJson()));
+            });
         },
         api: {
             bindevent: function () {
