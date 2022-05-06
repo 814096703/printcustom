@@ -28,6 +28,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
                         {field: 'id', title: __('Id')},
                         {field: 'name', title: __('Name'), operate: 'LIKE'},
                         {field: 'tempdata', title: __('Tempdata'), visible: false},
+                        {field: 'fielddata', title: __('Fielddata'), visible: false},
                         {field: 'exa_image', title: __('Exa_image'), operate: false, events: Table.api.events.image, formatter: Table.api.formatter.image},
                         {field: 'memo', title: __('Memo'), operate: 'LIKE'},
                         {field: 'user_id', title: __('User_id')},
@@ -44,28 +45,101 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
         add: function () {
             Controller.api.bindevent();
             $('#designTemple').click(function () {
+                let tempdata = $("#c-tempdata").val();
+                window.sessionStorage.setItem("tempdata", tempdata);
                 window.top.Fast.api.open('temple/custom', '模板设计', {
                     area: ["100%", "100%"],
                     callback:function(tempdata){
-                        console.log('tempdata', tempdata);
-                        $("#c-jsondata").attr('value', tempdata);
+                        $("#c-tempdata").attr('value', tempdata);
                     }
                 });
             });
+
+            $("#setFielddata").click(() => {
+                $("#fieldinfo").show();
+
+                let fielddata = $("#c-fielddata").val();
+                let fielddataObj = fielddata? JSON.parse(fielddata): {};
+
+                let tempdata = $("#c-tempdata").val();
+                let tempdataObj = tempdata? JSON.parse(tempdata): null;
+                let eleArr = tempdataObj? tempdataObj['panels'][0]['printElements']:[];
+                eleArr.forEach(ele => {
+                    if(Object.hasOwnProperty.call(ele, 'field')){
+                        if(!Object.hasOwnProperty.call(fielddataObj, ele.field)){
+                            fielddataObj[ele.field] = "";
+                        }
+                        let field_div = `
+                            <label class="control-label col-xs-12 col-sm-2">aa:</label>
+                            <div class="col-xs-12 col-sm-3">
+                                <input id="field_aa" class="form-control customfield" name="field_aa" type="text">
+                            </div>
+                        `;
+                        // $(".customfield").
+                        $("#fieldinfo").append(field_div);
+                        
+                    }
+                });
+            })
         },
         edit: function () {
             Controller.api.bindevent();
+            $('#designTemple').click(function () {
+                let tempdata = $("#c-tempdata").val();
+                window.sessionStorage.setItem("tempdata", tempdata);
+                window.top.Fast.api.open('temple/custom', '模板设计', {
+                    area: ["100%", "100%"],
+                    callback:function(tempdata){
+                        $("#c-tempdata").attr('value', tempdata);
+                    }
+                });
+            });
+
+            let tempdata = $("#c-tempdata").val();
+            let tempdataObj = JSON.parse(tempdata);
+            
+            console.log('tempdataObj', tempdataObj);
+            let eleArr = tempdataObj['panels'][0]['printElements'];
+
+            let fielddata = $("#c-fielddata").val();
+            let fielddataObj = fielddata? JSON.parse(fielddata): {};
+            eleArr.forEach(ele => {
+                if(Object.hasOwnProperty.call(ele, 'field')){
+                    if(!Object.hasOwnProperty.call(fielddataObj, ele.field)){
+                        fielddataObj[ele.field] = "";
+                    }
+                    let field_div = `
+                        <label class="control-label col-xs-12 col-sm-2">aa:</label>
+                        <div class="col-xs-12 col-sm-3">
+                            <input id="field_aa" class="form-control customfield" name="field_aa" type="text">
+                        </div>
+                    `;
+                    // $(".customfield").
+                    $("#fieldinfo").append(field_div);
+                    
+                }
+            });
+            
+            $("#c-fielddata").attr('value', JSON.stringify(fieldArr));
+
+            
+            
+            
         },
         custom: function() {
+            var tempdata = window.sessionStorage.getItem("tempdata");
+            window.sessionStorage.removeItem("tempdata");
+            
             var hiprintTemplate;
             $(document).ready(function () {
                 hiprint.init({
                     providers: [new customElementTypeProvider()]
                 });
+                let default_temp = { "panels": [{ "index": 0, "paperType": "A4", "height": 297, "width": 210, "paperHeader": 43.5, "paperFooter": 801, "printElements": [], "paperNumberLeft": 565, "paperNumberTop": 819 }] };
                 //设置左侧拖拽事件
                 hiprint.PrintElementTypeManager.buildByHtml($('.ep-draggable-item'));
                 hiprintTemplate = new hiprint.PrintTemplate({
-                    template: { "panels": [{ "index": 0, "paperType": "A4", "height": 297, "width": 210, "paperHeader": 43.5, "paperFooter": 801, "printElements": [], "paperNumberLeft": 565, "paperNumberTop": 819 }] },
+                    template: tempdata? JSON.parse(tempdata): default_temp,
                     settingContainer: '#PrintElementOptionSetting',
                     paginationContainer: '.hiprint-printPagination'
                 });

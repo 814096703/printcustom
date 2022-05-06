@@ -26,6 +26,7 @@ class Temple extends Backend
     }
 
     public function custom(){
+        
         return $this->view->fetch();
     }
 
