@@ -27,7 +27,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
                         {checkbox: true},
                         {field: 'id', title: __('Id')},
                         {field: 'name', title: __('Name'), operate: 'LIKE'},
-                        {field: 'jsondata', title: __('Jsondata')},
+                        {field: 'tempdata', title: __('Tempdata'), visible: false},
                         {field: 'exa_image', title: __('Exa_image'), operate: false, events: Table.api.events.image, formatter: Table.api.formatter.image},
                         {field: 'memo', title: __('Memo'), operate: 'LIKE'},
                         {field: 'user_id', title: __('User_id')},
@@ -46,9 +46,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
             $('#designTemple').click(function () {
                 window.top.Fast.api.open('temple/custom', '模板设计', {
                     area: ["100%", "100%"],
-                    callback:function(value){
-                        console.log('value', value);
-                        $("#c-jsondata").attr('value', value);
+                    callback:function(tempdata){
+                        console.log('tempdata', tempdata);
+                        $("#c-jsondata").attr('value', tempdata);
                     }
                 });
             });

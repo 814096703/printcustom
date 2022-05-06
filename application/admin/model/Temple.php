@@ -33,9 +33,4 @@ class Temple extends Model
     
 
 
-
-
-
-
-
 }
