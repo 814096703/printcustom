@@ -50,12 +50,21 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
                 window.top.Fast.api.open('temple/custom', '模板设计', {
                     area: ["100%", "100%"],
                     callback:function(tempdata){
-                        $("#c-tempdata").attr('value', tempdata);
+                        console.log('tempdata', tempdata);
+                        $("#c-tempdata").prop('value', tempdata);
                     }
                 });
             });
 
             $("#setFielddata").click(() => {
+                
+                if($('#fieldTop').css('display')!='none'){
+                    $('#fieldTop').hide()
+                    $("#fieldinfo").hide();
+                    $("#fieldinfo").empty();
+                    return;
+                }
+                $('#fieldTop').show()
                 $("#fieldinfo").show();
 
                 let fielddata = $("#c-fielddata").val();
@@ -63,23 +72,43 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
 
                 let tempdata = $("#c-tempdata").val();
                 let tempdataObj = tempdata? JSON.parse(tempdata): null;
+
                 let eleArr = tempdataObj? tempdataObj['panels'][0]['printElements']:[];
                 eleArr.forEach(ele => {
+                    ele = ele['options'];
                     if(Object.hasOwnProperty.call(ele, 'field')){
-                        if(!Object.hasOwnProperty.call(fielddataObj, ele.field)){
-                            fielddataObj[ele.field] = "";
+                        let value = ele.field;
+                        if(Object.hasOwnProperty.call(fielddataObj, ele.field)){
+                            value = fielddataObj[ele.field];
                         }
                         let field_div = `
-                            <label class="control-label col-xs-12 col-sm-2">aa:</label>
-                            <div class="col-xs-12 col-sm-3">
-                                <input id="field_aa" class="form-control customfield" name="field_aa" type="text">
+                            <label class="control-label col-xs-12 col-sm-2">${ele.field}:</label>
+                            <div class="col-xs-12 col-sm-4" style="margin-top:5px">
+                                <input id="field_${ele.field}" class="form-control customfield" name="field_${ele.field}" type="text" value="${value}">
                             </div>
                         `;
-                        // $(".customfield").
                         $("#fieldinfo").append(field_div);
-                        
                     }
                 });
+            });
+
+            $("#saveFielddata").click(() => {
+                let fielddataObj = {};
+
+                let tempdata = $("#c-tempdata").val();
+                let tempdataObj = tempdata? JSON.parse(tempdata): null;
+
+                let eleArr = tempdataObj? tempdataObj['panels'][0]['printElements']:[];
+                eleArr.forEach((ele) => {
+                    ele = ele['options'];
+                    if(Object.hasOwnProperty.call(ele, 'field')){
+                        fielddataObj[ele.field] = $("#field_"+ele.field).val();
+                    }
+                })
+                $("#c-fielddata").prop('value', JSON.stringify(fielddataObj));
+                $('#fieldTop').hide()
+                $("#fieldinfo").hide();
+                $("#fieldinfo").empty();
             })
         },
         edit: function () {
@@ -90,40 +119,66 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
                 window.top.Fast.api.open('temple/custom', '模板设计', {
                     area: ["100%", "100%"],
                     callback:function(tempdata){
-                        $("#c-tempdata").attr('value', tempdata);
+                        console.log('tempdata', tempdata);
+                        $("#c-tempdata").prop('value', tempdata);
                     }
                 });
             });
 
-            let tempdata = $("#c-tempdata").val();
-            let tempdataObj = JSON.parse(tempdata);
-            
-            console.log('tempdataObj', tempdataObj);
-            let eleArr = tempdataObj['panels'][0]['printElements'];
-
-            let fielddata = $("#c-fielddata").val();
-            let fielddataObj = fielddata? JSON.parse(fielddata): {};
-            eleArr.forEach(ele => {
-                if(Object.hasOwnProperty.call(ele, 'field')){
-                    if(!Object.hasOwnProperty.call(fielddataObj, ele.field)){
-                        fielddataObj[ele.field] = "";
-                    }
-                    let field_div = `
-                        <label class="control-label col-xs-12 col-sm-2">aa:</label>
-                        <div class="col-xs-12 col-sm-3">
-                            <input id="field_aa" class="form-control customfield" name="field_aa" type="text">
-                        </div>
-                    `;
-                    // $(".customfield").
-                    $("#fieldinfo").append(field_div);
-                    
+            $("#setFielddata").click(() => {
+                
+                if($('#fieldTop').css('display')!='none'){
+                    $('#fieldTop').hide()
+                    $("#fieldinfo").hide();
+                    $("#fieldinfo").empty();
+                    return;
                 }
-            });
-            
-            $("#c-fielddata").attr('value', JSON.stringify(fieldArr));
+                $('#fieldTop').show()
+                $("#fieldinfo").show();
 
-            
-            
+                let fielddata = $("#c-fielddata").val();
+                let fielddataObj = fielddata? JSON.parse(fielddata): {};
+
+                let tempdata = $("#c-tempdata").val();
+                let tempdataObj = tempdata? JSON.parse(tempdata): null;
+
+                let eleArr = tempdataObj? tempdataObj['panels'][0]['printElements']:[];
+                eleArr.forEach(ele => {
+                    ele = ele['options'];
+                    if(Object.hasOwnProperty.call(ele, 'field')){
+                        let value = ele.field;
+                        if(Object.hasOwnProperty.call(fielddataObj, ele.field)){
+                            value = fielddataObj[ele.field];
+                        }
+                        let field_div = `
+                            <label class="control-label col-xs-12 col-sm-2">${ele.field}:</label>
+                            <div class="col-xs-12 col-sm-4" style="margin-top:5px">
+                                <input id="field_${ele.field}" class="form-control customfield" name="field_${ele.field}" type="text" value="${value}">
+                            </div>
+                        `;
+                        $("#fieldinfo").append(field_div);
+                    }
+                });
+            });
+
+            $("#saveFielddata").click(() => {
+                let fielddataObj = {};
+
+                let tempdata = $("#c-tempdata").val();
+                let tempdataObj = tempdata? JSON.parse(tempdata): null;
+
+                let eleArr = tempdataObj? tempdataObj['panels'][0]['printElements']:[];
+                eleArr.forEach((ele) => {
+                    ele = ele['options'];
+                    if(Object.hasOwnProperty.call(ele, 'field')){
+                        fielddataObj[ele.field] = $("#field_"+ele.field).val();
+                    }
+                })
+                $("#c-fielddata").prop('value', JSON.stringify(fielddataObj));
+                $('#fieldTop').hide();
+                $("#fieldinfo").hide();
+                $("#fieldinfo").empty();
+            })
             
         },
         custom: function() {
@@ -216,6 +271,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
                 Fast.api.close(JSON.stringify(hiprintTemplate.getJson()));
             });
         },
+        
         api: {
             bindevent: function () {
                 Form.api.bindevent($("form[role=form]"));
