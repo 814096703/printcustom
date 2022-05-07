@@ -271,7 +271,127 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
                 Fast.api.close(JSON.stringify(hiprintTemplate.getJson()));
             });
         },
-        
+        print: function() {
+            // console.log('limberList',Config.limberList);
+            console.log('detail_list',Config.detail_list);
+            console.log('mainInfos',Config.row);
+            
+            let list = Config.detail_list;
+            let mainInfos = Config.row;
+            let tb_tmp = [];
+            let weight_sum = 0; 
+            let count_sum = 0
+
+            let temObj = {};
+            list.forEach(el => {
+                count_sum+=Number(el['TRN_TPNumber']);
+                weight_sum+=Number(el['sum_weight'])*100;
+                let k = el['TD_TypeName'];
+                console.log('k', k);
+                if(!temObj[k]){
+                    temObj[k] = [];
+                }
+                temObj[k].push(el);
+            });
+            console.log('temObj', temObj)
+
+            for (const key in temObj) {
+                let count_tmp = 0;
+                let weight_tmp = 0;
+                const ele = temObj[key];
+                let tmpArr = ele.map((element)=>{
+                    count_tmp+=Number(element['TRN_TPNumber']);
+                    weight_tmp+=Number(element['sum_weight'])*100;
+                    let tmp = {
+                        'gth': element['TRN_Project'],
+                        'jh': element['TRN_TPNum'],
+                        'cz': element['DtMD_sMaterial'],
+                        'gg': element['DtMD_sSpecification'],
+                        'kd': element['DtMD_fWidth']==null?'':element['DtMD_fWidth'],
+                        'cd': element['DtMD_iLength'],
+                        'sl': element['TRN_TPNumber'],
+                        'dz': element['TRN_TPWeight'],
+                        'zl': element['sum_weight'],
+                        'bz': element['DtMD_sRemark'],
+                    }
+                    return tmp;
+                });
+                //小计
+                tmpArr.push({
+                    'gth': '塔型：',
+                    'jh': key,
+                    'cz': '',
+                    'gg': '',
+                    'kd': '',
+                    'cd': '合计：',
+                    'sl': count_tmp,
+                    'dz': '',
+                    'zl': weight_tmp/100,
+                    'bz': '',
+                })
+                tb_tmp = tb_tmp.concat(tmpArr);
+            }
+            console.log('tb_tmp', tb_tmp)
+
+            let data_tmp={
+                kh:mainInfos['Customer_Name'],
+                gcmc: mainInfos['t_project'],
+                htbh: mainInfos['T_Num'],
+                
+                beizhu: mainInfos['TRNM_Memo'],
+                ggh: mainInfos['old_TypeName'],
+                zsl: count_sum,
+                zzl: weight_sum/100,
+                bjlx: mainInfos['TRNM_Sort'],
+                tb:tb_tmp
+            };
+
+            let pg_mx= {
+                "#p_mx1": 1,
+            }; //明细，当前页
+            //翻页
+            window.pageto=function(id,num){
+
+                let pcount=$(id+' .hiprint-printPanel .hiprint-printPaper').length; //明细，总页数
+                let pmx=pg_mx[id];
+                pmx=pmx+num;
+                $(id).parent().parent().find(".pgnxt").removeClass('disabled');
+                $(id).parent().parent().find(".pgpre").removeClass('disabled');
+                if(pmx<=1){
+                    pmx=1;
+                    $(id).parent().parent().find(".pgpre").addClass('disabled');
+                }
+                if(pmx>=pcount){
+                    pmx=pcount;
+                    // console.log($(id+" .pgnxt"))
+                    $(id).parent().parent().find(".pgnxt").addClass('disabled');
+                }
+                pg_mx[id]=pmx;
+
+                // console.log(id+' .hiprint-printPanel .hiprint-printPaper',pg_mx1-1)
+                // $(id+' .hiprint-printPanel .hiprint-printPaper')[pg_mx1-1].scrollIntoView();
+
+                let mxpage=$(id+' .hiprint-printPanel .hiprint-printPaper');
+                for(let v of mxpage){
+                    $(v).hide();
+                }
+
+                $(mxpage[pmx-1]).show();
+                $(id).show();
+            };
+            
+            hiprint.init();
+            //初始化模板
+            let htemp =  new hiprint.PrintTemplate({template: blddata});
+
+            $('#p_mx1').html(htemp.getHtml(data_tmp));
+            $("#handleprintmx1").click(function(){
+                htemp.print(data_tmp);
+            });
+            
+            pageto('#p_mx1',0);
+            
+        },
         api: {
             bindevent: function () {
                 Form.api.bindevent($("form[role=form]"));
