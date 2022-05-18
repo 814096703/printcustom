@@ -17,6 +17,13 @@ class Temple extends Backend
      * @var \app\admin\model\Temple
      */
     protected $model = null;
+    protected $dataLimit = 'auth';
+    protected $dataLimitField = 'admin_id';
+
+    public function custom(){
+        
+        return $this->view->fetch();
+    }
 
     public function _initialize()
     {
@@ -24,12 +31,6 @@ class Temple extends Backend
         $this->model = new \app\admin\model\Temple;
 
     }
-
-    public function custom(){
-        
-        return $this->view->fetch();
-    }
-
 
     // public function add(Type $var = null)
     // {
