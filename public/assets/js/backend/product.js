@@ -26,12 +26,12 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
                     [
                         {checkbox: true},
                         {field: 'id', title: __('Id')},
-                        {field: 'p_name', title: __('P_name'), operate: 'LIKE'},
-                        {field: 'p_image', title: __('P_image'), operate: false, events: Table.api.events.image, formatter: Table.api.formatter.image},
-                        {field: 'price', title: __('Price'), operate:'BETWEEN'},
-                        {field: 'temp_id', title: __('Temp_id')},
-                        {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false},
-                        {field: 'updatetime', title: __('Updatetime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false},
+                        {field: 'p_name', title: '商品名称', operate: 'LIKE'},
+                        {field: 'p_image', title: '商品封面', operate: false, events: Table.api.events.image, formatter: Table.api.formatter.image},
+                        {field: 'price', title: '商品价格', operate:'BETWEEN'},
+                        {field: 'temp_id', title: '模板'},
+                        {field: 'createtime', title: '创建时间', operate:'RANGE', addclass:'datetimerange', autocomplete:false},
+                        {field: 'updatetime', title: '更新时间', operate:'RANGE', addclass:'datetimerange', autocomplete:false},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]
                 ]
