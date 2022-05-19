@@ -2,7 +2,11 @@
 
 return [
     'autoload' => false,
-    'hooks' => [],
+    'hooks' => [
+        'app_init' => [
+            'epay',
+        ],
+    ],
     'route' => [],
     'priority' => [],
     'domain' => '',
