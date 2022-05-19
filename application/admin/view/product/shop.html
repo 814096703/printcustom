@@ -1,0 +1,113 @@
+<style>
+a {
+    text-decoration: none;
+}
+    
+.goods-item-m .goods-title {
+	padding-bottom: 5px;
+	overflow: hidden;
+	text-overflow:ellipsis;
+	white-space: nowrap;
+	padding: 0 15px;
+}
+.goods-item-s .goods-title {
+	overflow: hidden;
+	text-overflow:ellipsis;
+	white-space: nowrap;
+	padding-right: 100px;
+}
+.title {
+	color: #000;
+}
+.goods-info {
+	color: #666;
+	margin-bottom: 10px;
+	overflow: hidden;
+	text-overflow:ellipsis;
+	white-space: nowrap;
+	padding: 0 15px;
+}
+.goods-price {
+	color: #ff6700;
+}
+.item-active {
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    transform: translate3d(0, -2px, 0);
+}
+.goods-item {
+	float: left;
+	background: #fff;
+	width: 233px;
+	transition: all .2s;
+}
+.goods-item-m {
+    position: relative;
+    height: 300px;
+    margin-left: 15px;
+    margin-bottom: 15px;
+    padding: 40px 0 20px;
+    text-align: center;
+}
+.goods-item-m .goods-thumb {
+    width: 150px;
+    height: 150px;
+    padding: 0 40px 5px;
+}
+.goods-item-m img {
+    width: 150px;
+    height: 150px;
+}
+.goods-item-m .goods-label {
+    color: #fff;
+    background: #ff6700;
+}
+.btn-bar{
+        padding:5px 10px;
+        margin-bottom:5px;
+    }
+</style>
+
+<div class="col-md-12">
+    <ul class="goods-list" style="list-style:none">
+        {foreach $list as $item}
+        <li class="goods-item goods-item-m">
+            <div class="goods-thumb">
+                <a href="#">
+                    <img src="{$item.p_image}" />
+                </a>
+            </div>
+            <div class="goods-title"><a href="#">{$item.p_name}</a></div>
+            <!-- <p class="goods-info">{$item.p_content}</p> -->
+            <p class="goods-price">{$item.price}元</p>
+            <button class="btn btn btn-default preview" onclick="pre('{$item.id}')">预览</button>
+            <button class="btn btn-primary">购买</button>
+        </li>
+        
+        {/foreach}
+
+    </ul>
+    
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document" style="display: inline-block; width: auto;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                
+                <h4 class="modal-title" id="myModalLabel">预览</h4>
+                
+            </div>
+            <div class="well btn-bar">
+                <button type="button" class="btn btn-danger" id="A4_printByHtml">打印</button>
+                
+            </div>
+            <div class="modal-body">
+                <div class="prevViewDiv"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+            </div>
+        </div>
+    </div>
+</div>

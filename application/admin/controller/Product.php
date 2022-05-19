@@ -28,7 +28,22 @@ class Product extends Backend
     public function shop()
     {
         # code...
+        $list = $this->model->select();
+
+        $this->view->assign("list",$list);
+        $this->assignconfig('list',$list);
         return $this->view->fetch();
+    }
+
+    public function getTempByPid($id)
+    {
+        # code...
+        $row = $this->model->alias("p")
+            ->join(["fa_temple"=>"t"], "t.id = p.temp_id")
+            ->field("t.tempdata, t.fielddata")
+            ->where("p.id", intval($id))
+            ->find();
+        return json($row);
     }
 
     /**

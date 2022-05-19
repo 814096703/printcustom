@@ -1,4 +1,4 @@
-define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefined, Backend, Table, Form) {
+define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customElementTypeProvider'], function ($, undefined, Backend, Table, Form) {
 
     var Controller = {
         index: function () {
@@ -44,6 +44,45 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             Controller.api.bindevent();
         },
         edit: function () {
+            Controller.api.bindevent();
+        },
+        shop: function () {
+            // 样式相关
+            $gitem = $(".goods-item");
+            // 商品鼠标经过样式
+            $gitem.hover(function(){
+                $(this).addClass("item-active");
+            },function(){
+                $(this).removeClass("item-active");
+            })
+            
+            // 预览 
+            hiprint.init();
+            window.pre=function(id){
+                
+                $.ajax({
+                    async: false,
+                    url:"product/getTempByPid/id/"+id,
+                    success:function(result){
+                        // console.log('res', result);
+                        
+                        let tempdata = (result && result['tempdata'])? JSON.parse(result['tempdata']):{};
+                        
+                        let htemp = new hiprint.PrintTemplate({template: tempdata});
+                    
+                        $("#A4_printByHtml").click(function(){
+                            htemp.print({});
+                        });
+                        $('#myModal .modal-body .prevViewDiv').html(htemp.getHtml({}));
+                        
+                        $('#myModal').modal('show')
+                    
+                    }
+                });
+               
+            }
+            
+           
             Controller.api.bindevent();
         },
         api: {
