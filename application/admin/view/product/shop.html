@@ -80,7 +80,7 @@ a {
             <!-- <p class="goods-info">{$item.p_content}</p> -->
             <p class="goods-price">{$item.price}元</p>
             <button class="btn btn btn-default preview" onclick="pre('{$item.id}')">预览</button>
-            <button class="btn btn-primary">购买</button>
+            <button class="btn btn-primary" onclick="buy('{$item.id}')">购买</button>
         </li>
         
         {/foreach}

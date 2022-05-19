@@ -3,6 +3,11 @@
 namespace app\admin\controller;
 
 use app\common\controller\Backend;
+use think\Db;
+use think\exception\PDOException;
+use think\exception\ValidateException;
+use Exception;
+use app\admin\library\Auth;
 
 /**
  * 
@@ -22,7 +27,8 @@ class Product extends Backend
     {
         parent::_initialize();
         $this->model = new \app\admin\model\Product;
-
+        $this->buyLogModel = new \app\admin\model\Userpurchaselog;
+        $this->userTempModel = new \app\admin\model\Usertemp;
     }
 
     public function shop()
@@ -44,6 +50,65 @@ class Product extends Backend
             ->where("p.id", intval($id))
             ->find();
         return json($row);
+    }
+
+    public function buy($id)
+    {
+        $auth = Auth::instance();
+        $admin_id = $auth->isLogin() ? $auth->id : 0;
+        if($admin_id==0){
+            $this->error("请先登录");
+        }
+
+        $product = $this->model->get(intval($id));
+        if(!$id || !$product ){
+            $this->error("购买的产品不存在");
+        }
+
+        $lastlog = $this->buyLogModel
+            ->where('product_id', $product['id'])
+            ->where('admin_id', $admin_id)
+            ->find();
+        if($lastlog){
+            $this->error("您已购买该产品，请勿重复购买");
+        }
+        
+        $newlog = [
+            'purchase_price'=>$product['price'],
+            'product_id'=>$product['id'],
+            'admin_id'=>$admin_id,
+            'createtime'=>date("Y-m-d H:i:s"),
+            
+        ];
+        $usertemp = [
+            'temp_id'=>$product['temp_id'],
+            'admin_id'=>$admin_id,
+            'createtime'=>date("Y-m-d H:i:s"),
+            'updatetime'=>date("Y-m-d H:i:s"),
+            'weigh'=>10,
+            'default_data'=>'{}'
+        ];
+        Db::startTrans();
+        try {
+            $result = $this->buyLogModel->allowField(true)->save($newlog);
+            $result = $this->userTempModel->allowField(true)->save($usertemp);
+            Db::commit();
+        } catch (ValidateException $e) {
+            Db::rollback();
+            $this->error($e->getMessage());
+        } catch (PDOException $e) {
+            Db::rollback();
+            $this->error($e->getMessage());
+        } catch (Exception $e) {
+            Db::rollback();
+            $this->error($e->getMessage());
+        }
+        if ($result !== false) {
+            $this->success('购买成功！');
+        } else {
+            $this->error('购买出错');
+        }
+        
     }
 
     /**

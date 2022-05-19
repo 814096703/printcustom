@@ -17,6 +17,8 @@ class Userpurchaselog extends Backend
      * @var \app\admin\model\Userpurchaselog
      */
     protected $model = null;
+    protected $dataLimit = 'auth';
+    protected $dataLimitField = 'admin_id';
 
     public function _initialize()
     {

@@ -61,7 +61,6 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
             window.pre=function(id){
                 
                 $.ajax({
-                    async: false,
                     url:"product/getTempByPid/id/"+id,
                     success:function(result){
                         // console.log('res', result);
@@ -81,7 +80,35 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
                 });
                
             }
-            
+            window.buy=function(id){
+                // $.ajax({
+                //     url: 'chain/pack/sale_invoice/ctrlzContent',
+                //     type: 'post',
+                //     dataType: 'json',
+                //     data: {num: SID_ID},
+                //     success: function (ret) {
+                //         if(ret.code ==1){
+                //             window.location.reload();
+                //         }else layer.msg(ret.msg);
+                        
+                //     }, error: function (e) {
+                //         Backend.api.toastr.error(e.message);
+                //     }
+                // });
+                $.ajax({
+                    async: false,
+                    url:"product/buy/id/"+id,
+                    success: function (ret) {
+                        if(ret.code ==1){
+                            layer.msg(ret.msg);
+                        }else layer.msg(ret.msg);
+                        
+                    }, error: function (e) {
+                        Backend.api.toastr.error(e.message);
+                    }
+                });
+               
+            }
            
             Controller.api.bindevent();
         },

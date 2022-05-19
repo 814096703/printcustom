@@ -17,6 +17,8 @@ class Usertemp extends Backend
      * @var \app\admin\model\Usertemp
      */
     protected $model = null;
+    protected $dataLimit = 'auth';
+    protected $dataLimitField = 'admin_id';
 
     public function _initialize()
     {
