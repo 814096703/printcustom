@@ -90,22 +90,28 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
                         $("#fieldinfo").append(field_div);
                     }
                 });
+
+                $(".customfield").change(() => {
+                    let fielddataObj = {};
+    
+                    let tempdata = $("#c-tempdata").val();
+                    let tempdataObj = tempdata? JSON.parse(tempdata): null;
+    
+                    let eleArr = tempdataObj? tempdataObj['panels'][0]['printElements']:[];
+                    eleArr.forEach((ele) => {
+                        ele = ele['options'];
+                        if(Object.hasOwnProperty.call(ele, 'field')){
+                            fielddataObj[ele.field] = $("#field_"+ele.field).val();
+                        }
+                    })
+                    $("#c-fielddata").prop('value', JSON.stringify(fielddataObj));
+                })
             });
 
+            
+
             $("#saveFielddata").click(() => {
-                let fielddataObj = {};
-
-                let tempdata = $("#c-tempdata").val();
-                let tempdataObj = tempdata? JSON.parse(tempdata): null;
-
-                let eleArr = tempdataObj? tempdataObj['panels'][0]['printElements']:[];
-                eleArr.forEach((ele) => {
-                    ele = ele['options'];
-                    if(Object.hasOwnProperty.call(ele, 'field')){
-                        fielddataObj[ele.field] = $("#field_"+ele.field).val();
-                    }
-                })
-                $("#c-fielddata").prop('value', JSON.stringify(fielddataObj));
+                
                 $('#fieldTop').hide()
                 $("#fieldinfo").hide();
                 $("#fieldinfo").empty();
@@ -159,25 +165,30 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
                         $("#fieldinfo").append(field_div);
                     }
                 });
+                $(".customfield").change(() => {
+                    let fielddataObj = {};
+    
+                    let tempdata = $("#c-tempdata").val();
+                    let tempdataObj = tempdata? JSON.parse(tempdata): null;
+    
+                    let eleArr = tempdataObj? tempdataObj['panels'][0]['printElements']:[];
+                    eleArr.forEach((ele) => {
+                        ele = ele['options'];
+                        if(Object.hasOwnProperty.call(ele, 'field')){
+                            fielddataObj[ele.field] = $("#field_"+ele.field).val();
+                        }
+                    })
+                    $("#c-fielddata").prop('value', JSON.stringify(fielddataObj));
+                })
             });
 
+           
+
             $("#saveFielddata").click(() => {
-                let fielddataObj = {};
-
-                let tempdata = $("#c-tempdata").val();
-                let tempdataObj = tempdata? JSON.parse(tempdata): null;
-
-                let eleArr = tempdataObj? tempdataObj['panels'][0]['printElements']:[];
-                eleArr.forEach((ele) => {
-                    ele = ele['options'];
-                    if(Object.hasOwnProperty.call(ele, 'field')){
-                        fielddataObj[ele.field] = $("#field_"+ele.field).val();
-                    }
-                })
-                $("#c-fielddata").prop('value', JSON.stringify(fielddataObj));
+                
                 $('#fieldTop').hide();
                 $("#fieldinfo").hide();
-                $("#fieldinfo").empty();
+                // $("#fieldinfo").empty();
             })
             
         },

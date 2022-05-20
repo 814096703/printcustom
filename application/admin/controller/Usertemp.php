@@ -24,9 +24,21 @@ class Usertemp extends Backend
     {
         parent::_initialize();
         $this->model = new \app\admin\model\Usertemp;
-
+        $this->tempModel = new \app\admin\model\Temple;
     }
 
+    public function print($ids){
+        $row = $this->model->get($ids);
+        if(!$row){
+            $this->error("不存在该条记录");
+        }
+        $temp = $this->tempModel->where('id', $row['temp_id'])->find();
+
+        $this->assignconfig("temp",$temp);
+        $this->assignconfig("row",$row);
+        $this->assignconfig("ids",$ids);
+        return $this->view->fetch();
+    }
 
 
     /**

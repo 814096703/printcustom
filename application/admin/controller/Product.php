@@ -73,24 +73,27 @@ class Product extends Backend
             $this->error("您已购买该产品，请勿重复购买");
         }
         
-        $newlog = [
-            'purchase_price'=>$product['price'],
-            'product_id'=>$product['id'],
-            'admin_id'=>$admin_id,
-            'createtime'=>date("Y-m-d H:i:s"),
-            
-        ];
-        $usertemp = [
-            'temp_id'=>$product['temp_id'],
-            'admin_id'=>$admin_id,
-            'createtime'=>date("Y-m-d H:i:s"),
-            'updatetime'=>date("Y-m-d H:i:s"),
-            'weigh'=>10,
-            'default_data'=>'{}'
-        ];
+       
+        
         Db::startTrans();
         try {
-            $result = $this->buyLogModel->allowField(true)->save($newlog);
+            $newlog = [
+                'purchase_price'=>$product['price'],
+                'product_id'=>$product['id'],
+                'admin_id'=>$admin_id,
+                'createtime'=>date("Y-m-d H:i:s"),
+                
+            ];
+            $logResult = $this->buyLogModel->allowField(true)->save($newlog);
+            $usertemp = [
+                'temp_id'=>$product['temp_id'],
+                'admin_id'=>$admin_id,
+                'createtime'=>date("Y-m-d H:i:s"),
+                'updatetime'=>date("Y-m-d H:i:s"),
+                'weigh'=>10,
+                'default_data'=>'{}',
+                'purchase_id'=>$logResult['id']
+            ];
             $result = $this->userTempModel->allowField(true)->save($usertemp);
             Db::commit();
         } catch (ValidateException $e) {
