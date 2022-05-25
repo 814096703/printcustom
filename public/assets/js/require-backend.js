@@ -66,7 +66,8 @@ require.config({
         'html2canvas':'../libs/hiprint/plugins/jspdf/html2canvas.min',
         'jspdf':'../libs/hiprint/plugins/jspdf/jspdf.min',
         'customElementTypeProvider': '../libs/hiprint/custom_test/custom-etype-provider',
-        'customPrintJson': '../libs/hiprint/custom_test/custom-print-json'
+        'customPrintJson': '../libs/hiprint/custom_test/custom-print-json',
+        'md5': '../libs/md5/md5'
     },
     // shim依赖配置
     shim: {

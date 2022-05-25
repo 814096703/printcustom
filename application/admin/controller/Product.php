@@ -114,6 +114,14 @@ class Product extends Backend
         
     }
 
+    public function pay()
+    {
+        # code...
+        // echo '111';
+        // echo \addons\epay\library\Service::submitOrder("99.9", "4646", "wechat", "订单标题", "回调地址", "返回地址", "web");
+        
+    }
+
     /**
      * 默认生成的控制器所继承的父类中有index/add/edit/del/multi五个基础方法、destroy/restore/recyclebin三个回收站方法
      * 因此在当前控制器中可不用编写增删改查的代码,除非需要自己控制这部分逻辑

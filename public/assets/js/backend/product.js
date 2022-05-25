@@ -1,4 +1,4 @@
-define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customElementTypeProvider'], function ($, undefined, Backend, Table, Form) {
+define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customElementTypeProvider', 'md5'], function ($, undefined, Backend, Table, Form) {
 
     var Controller = {
         index: function () {
@@ -81,31 +81,24 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
                
             }
             window.buy=function(id){
+                
                 // $.ajax({
-                //     url: 'chain/pack/sale_invoice/ctrlzContent',
-                //     type: 'post',
-                //     dataType: 'json',
-                //     data: {num: SID_ID},
+                //     async: false,
+                //     url:"product/buy/id/"+id,
                 //     success: function (ret) {
                 //         if(ret.code ==1){
-                //             window.location.reload();
+                //             layer.msg(ret.msg);
                 //         }else layer.msg(ret.msg);
                         
                 //     }, error: function (e) {
                 //         Backend.api.toastr.error(e.message);
                 //     }
                 // });
-                $.ajax({
-                    async: false,
-                    url:"product/buy/id/"+id,
-                    success: function (ret) {
-                        if(ret.code ==1){
-                            layer.msg(ret.msg);
-                        }else layer.msg(ret.msg);
-                        
-                    }, error: function (e) {
-                        Backend.api.toastr.error(e.message);
-                    }
+                let serverurl = '101.35.112.113';
+                let ordercode =  md5(Date.now()+'-'+id, 16);
+                
+                window.top.Fast.api.open('http://'+serverurl+'/paycenter/paycentersk.php?ordercode='+ordercode, '支付', {
+                    area: ["100%", "100%"]
                 });
                
             }
