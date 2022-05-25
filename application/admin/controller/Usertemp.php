@@ -40,6 +40,28 @@ class Usertemp extends Backend
         return $this->view->fetch();
     }
 
+    public function savedefaultdata()
+    {
+        # code...
+        if($this->request->isPost()){
+            $id = $this->request->post("id");
+            $data = $this->request->post("data");
+            $row = $this->model->get($id);
+            if(!$row){
+                $this->error("不存在该条记录");
+            }
+            $row['default_data'] = $data;
+            $result = $row->save();
+            if ($result !== false) {
+                $this->success('保存成功！');
+            } else {
+                $this->error('保存出错');
+            }
+        }
+        
+
+    }
+
 
     /**
      * 默认生成的控制器所继承的父类中有index/add/edit/del/multi五个基础方法、destroy/restore/recyclebin三个回收站方法

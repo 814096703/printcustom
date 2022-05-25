@@ -38,8 +38,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','hpbundle'], function 
                         {field: 'temp_id', title: __('Temp_id')},
                         {field: 'admin_id', title: __('Admin_id')},
                         {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false},
-                        {field: 'weigh', title: __('Weigh'), operate: false},
-                        {field: 'default_data', title: __('Default_data')},
+                        {field: 'weigh', title: __('Weigh'), operate: false,visible: false},
+                        {field: 'default_data', title: __('Default_data'),visible: false},
                         {field: 'updatetime', title: __('Updatetime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate},
                         {
@@ -156,17 +156,28 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','hpbundle'], function 
             $('#p_mx1').html(htemp.getHtml({}));
 
             // 字段开始
-            
+            let tmp_data = {};
+            const changePrintField = () => {
+                eleArr.forEach((ele) => {
+                    ele = ele['options'];
+                    if(Object.hasOwnProperty.call(ele, 'field')){
+                        tmp_data[ele.field] = $("#field_"+ele.field).val();
+                    }
+                })
+                $('#p_mx1').html(htemp.getHtml(tmp_data));
+            }
+
             let eleArr = tempdataObj? tempdataObj['panels'][0]['printElements']:[];
             
             eleArr.forEach(ele => {
                 ele = ele['options'];
                 if(Object.hasOwnProperty.call(ele, 'field')){
                     let title = ele.field;
-                    let value = '';
+                    let value = ele['src'] || ele['testData'] || '';
                     if(Object.hasOwnProperty.call(fielddataObj, ele.field)){
                         title = fielddataObj[ele.field];
                     }
+                    
                     if(Object.hasOwnProperty.call(defaultdataObj, ele.field)){
                         value = defaultdataObj[ele.field];
                     }
@@ -177,24 +188,43 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','hpbundle'], function 
                             <input id="field_${ele.field}" class="form-control print_field" name="field_${ele.field}" type="text" value="${value}">
                         </div>
                     `;
+                    
                     $("#fieldinfo").append(field_div);
+                    changePrintField();
                 }
             });
-
-            let tmp_data = {};
-            $(".print_field").change(() => {
-                
-                eleArr.forEach((ele) => {
-                    ele = ele['options'];
-                    if(Object.hasOwnProperty.call(ele, 'field')){
-                        tmp_data[ele.field] = $("#field_"+ele.field).val();
-                    }
-                })
-                $('#p_mx1').html(htemp.getHtml(tmp_data));
-            })
+            console.log('tmp_data', tmp_data);
+            
+            $(".print_field").change(changePrintField);
             $("#handleprintmx1").click(function(){
-                htemp.print(tmp_data);
+                filterArr = eleArr.filter((e) => {
+                    if(!Object.hasOwnProperty.call(e['options'], 'field') || e['options']['field'].split('-').pop()!=='nonprinting'){
+                        return e;
+                    }
+                });
+                tempdataObj['panels'][0]['printElements'] = filterArr;
+                let print_htemp = new hiprint.PrintTemplate({template: tempdataObj});
+                print_htemp.print(tmp_data);
             });
+            $('#savedefaultdata').click(() => {
+                $.ajax({
+                    async: false,
+                    type: "POST",
+                    url:"usertemp/savedefaultdata",
+                    data: {
+                        id: Config.ids,
+                        data: JSON.stringify(tmp_data)
+                    },
+                    success: function (ret) {
+                        if(ret.code ==1){
+                            layer.msg(ret.msg);
+                        }else layer.msg(ret.msg);
+                        
+                    }, error: function (e) {
+                        Backend.api.toastr.error(e.message);
+                    }
+                });
+            })
             Controller.api.bindevent();
         },
         api: {
