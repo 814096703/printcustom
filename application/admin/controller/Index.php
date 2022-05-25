@@ -8,6 +8,8 @@ use think\Config;
 use think\Hook;
 use think\Session;
 use think\Validate;
+use think\Db;
+use fast\Random;
 
 /**
  * 后台首页
@@ -16,7 +18,7 @@ use think\Validate;
 class Index extends Backend
 {
 
-    protected $noNeedLogin = ['login'];
+    protected $noNeedLogin = ['login', 'regist'];
     protected $noNeedRight = ['index', 'logout'];
     protected $layout = '';
 
@@ -135,4 +137,46 @@ class Index extends Backend
         return $html;
     }
 
+    public function regist()
+    {
+        if ($this->request->isPost()) {
+            
+            $params = $this->request->post("row/a");
+            if ($params) {
+                Db::startTrans();
+                try {
+                    if (!Validate::is($params['password'], '\S{6,30}')) {
+                        exception(__("Please input correct password"));
+                    }
+                    $params['salt'] = Random::alnum();
+                    $params['password'] = md5(md5($params['password']) . $params['salt']);
+                    $params['avatar'] = '/assets/img/avatar.png'; //设置新管理员默认头像。
+                    $params['status'] = 'normal';
+                    $result = model('Admin')->validate('Admin.add')->save($params);
+                    if ($result === false) {
+                        exception(model('Admin')->getError());
+                    }
+                    $group = array(7);
+
+                    
+                    $dataset = [];
+                    foreach ($group as $value) {
+                        $dataset[] = ['uid' => model('Admin')->id, 'group_id' => $value];
+                    }
+                    model('AuthGroupAccess')->saveAll($dataset);
+                    Db::commit();
+                } catch (\Exception $e) {
+                    Db::rollback();
+                    $this->error($e->getMessage());
+                }
+                $this->success(__('注册成功'), url('index/login'));
+            }
+            $this->error(__('Parameter %s can not be empty', ''));
+        }
+        $background = Config::get('fastadmin.login_background');
+        $background = $background ? (stripos($background, 'http') === 0 ? $background : config('site.cdnurl') . $background) : '';
+        $this->view->assign('background', $background);
+        $this->view->assign('title', __('注册'));
+        return $this->view->fetch();
+    }
 }

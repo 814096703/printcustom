@@ -101,16 +101,24 @@
                     <form action="" method="post" id="login-form">
                         <!--@AdminLoginFormBegin-->
                         <div id="errtips" class="hide"></div>
-                        {:token()}
                         <div class="input-group">
                             <div class="input-group-addon"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></div>
-                            <input type="text" class="form-control" id="pd-form-username" placeholder="{:__('Username')}" name="username" autocomplete="off" value="" data-rule="{:__('Username')}:required;username"/>
+                            <input type="text" class="form-control" id="pd-form-username" placeholder="{:__('Username')}" name="row[username]" autocomplete="off" value="" data-rule="{:__('Username')}:required;username"/>
                         </div>
 
                         <div class="input-group">
                             <div class="input-group-addon"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span></div>
-                            <input type="password" class="form-control" id="pd-form-password" placeholder="{:__('Password')}" name="password" autocomplete="off" value="" data-rule="{:__('Password')}:required;password"/>
+                            <input type="password" class="form-control" id="pd-form-password" placeholder="{:__('Password')}" name="row[password]" autocomplete="off" value="" data-rule="{:__('Password')}:required;password"/>
                         </div>
+                        <div class="input-group">
+                            <div class="input-group-addon"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div>
+                            <input type="email" class="form-control" id="email" name="row[email]" value="" placeholder="{:__('Email')}" data-rule="{:__('Email')}:required;email" />
+                        </div>
+                        <div class="input-group">
+                            <div class="input-group-addon"><span class="glyphicon glyphicon-heart" aria-hidden="true"></span></div>
+                            <input type="text" class="form-control" id="nickname" name="row[nickname]" autocomplete="off" value="" placeholder="{:__('Nickname')}" data-rule="{:__('Nickname')}:required" />
+                        </div>
+                        
                         <!--@CaptchaBegin-->
                         {if $Think.config.fastadmin.login_captcha}
                         <div class="input-group">
@@ -122,15 +130,10 @@
                         </div>
                         {/if}
                         <!--@CaptchaEnd-->
-                        <div class="form-group checkbox">
-                            <label class="inline" for="keeplogin">
-                                <input type="checkbox" name="keeplogin" id="keeplogin" value="1"/>
-                                {:__('Keep login')}
-                            </label>
-                        </div>
+                       
                         <div class="form-group">
-                            <button type="submit" class="btn btn-success btn-lg btn-block" style="background:#708eea;">{:__('Sign in')}</button>
-                            <button class="btn btn-success btn-lg btn-block" style="background:#708eea;" onclick="regist()">{:__('Sign up')}</button>
+                            <button type="submit" class="btn btn-success btn-lg btn-block" style="background:#708eea;">{:__('提交')}</button>
+                            <button onclick="back()" class="btn btn-success btn-lg btn-block" style="background:#708eea;">{:__('返回')}</button>
                         </div>
                         <!--@AdminLoginFormEnd-->
                     </form>

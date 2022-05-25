@@ -382,6 +382,9 @@ define(['jquery', 'bootstrap', 'backend', 'addtabs', 'adminlte', 'form'], functi
 
         },
         login: function () {
+            window.regist = () => {
+                window.location.href='regist';
+            }
             var lastlogin = localStorage.getItem("lastlogin");
             if (lastlogin) {
                 lastlogin = JSON.parse(lastlogin);
@@ -413,7 +416,32 @@ define(['jquery', 'bootstrap', 'backend', 'addtabs', 'adminlte', 'form'], functi
             }, function (data) {
                 $("input[name=captcha]").next(".input-group-addon").find("img").trigger("click");
             });
+        },
+        regist: function () {
+            window.back = () => {
+                window.location.href='login';
+            }
+            //让错误提示框居中
+            Fast.config.toastr.positionClass = "toast-top-center";
+
+            //本地验证未通过时提示
+            $("#login-form").data("validator-options", {
+                invalid: function (form, errors) {
+                    $.each(errors, function (i, j) {
+                        Toastr.error(j);
+                    });
+                },
+                target: '#errtips'
+            }); 
+            
+            // Form.api.bindevent($("form[role=form]"));
+            Form.api.bindevent($("#login-form"), function (data, ret) {
+                setTimeout(function () {
+                    location.href = ret.url ? ret.url : "/";
+                }, 1000);
+            });
         }
+        
     };
 
     return Controller;
