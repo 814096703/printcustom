@@ -26,9 +26,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     [
                         {checkbox: true},
                         {field: 'id', title: __('Id'), searchable: false, visible: false},
-                        {field: 'product_id', title: '商品'},
+                        {field: 'p_name', title: '商品', operate: 'LIKE'},
                         {field: 'purchase_price', title: '购买价格', operate:'BETWEEN'},
-                        {field: 'admin_id', title: '购买人'},
+                        {field: 'admin_name', title: '购买人', operate: 'LIKE'},
                         {field: 'createtime', title: '购买时间', operate:'RANGE', addclass:'datetimerange', autocomplete:false},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]

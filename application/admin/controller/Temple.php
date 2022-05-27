@@ -18,7 +18,7 @@ class Temple extends Backend
      */
     protected $model = null;
     protected $dataLimit = 'auth';
-    protected $dataLimitField = 'admin_id';
+    protected $dataLimitField = 'design_admin_id';
 
     public function custom(){
         

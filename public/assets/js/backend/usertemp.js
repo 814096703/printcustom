@@ -2,6 +2,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','hpbundle'], function 
 
     var Controller = {
         index: function () {
+            console.log('adminIds', Config.adminIds);
             // 初始化表格参数配置
             Table.api.init({
                 extend: {
@@ -34,13 +35,14 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','hpbundle'], function 
                 columns: [
                     [
                         {checkbox: true},
-                        {field: 'id', title: __('Id')},
-                        {field: 'temp_id', title: __('Temp_id')},
-                        {field: 'admin_id', title: __('Admin_id')},
+                        
+                        {field: 'name', title: '模板名称', operate:'RANGE'},
+                        {field: 'exa_image', title: '模板图片', operate: false, events: Table.api.events.image, formatter: Table.api.formatter.image},
+                        {field: 'admin_name', title: '创建人'},
                         {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false},
                         {field: 'weigh', title: __('Weigh'), operate: false,visible: false},
                         {field: 'default_data', title: __('Default_data'),visible: false},
-                        {field: 'updatetime', title: __('Updatetime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false},
+                        // {field: 'updatetime', title: __('Updatetime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate},
                         {
                             field: 'buttons',
@@ -139,6 +141,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','hpbundle'], function 
             Controller.api.bindevent();
         },
         edit: function () {
+           
             Controller.api.bindevent();
         },
         print: function () {
@@ -183,8 +186,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','hpbundle'], function 
                     }
                     
                     let field_div = `
-                        <label class="control-label col-xs-12 col-sm-2" style="margin:5px 0px">${title}:</label>
-                        <div class="col-xs-12 col-sm-4" style="margin:5px 0px">
+                        <label class="control-label col-xs-12 col-sm-1" style="margin:5px 0px">${title}:</label>
+                        <div class="col-xs-12 col-sm-3" style="margin:2px 0px">
                             <input id="field_${ele.field}" class="form-control print_field" name="field_${ele.field}" type="text" value="${value}">
                         </div>
                     `;

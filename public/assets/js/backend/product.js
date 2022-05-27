@@ -29,7 +29,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
                         {field: 'p_name', title: '商品名称', operate: 'LIKE'},
                         {field: 'p_image', title: '商品封面', operate: false, events: Table.api.events.image, formatter: Table.api.formatter.image},
                         {field: 'price', title: '商品价格', operate:'BETWEEN'},
-                        {field: 'temp_id', title: '模板'},
+                        {field: 'name', title: '模板名称', operate: 'LIKE'},
+                        {field: 'exa_image', title: '模板图片', operate: false, events: Table.api.events.image, formatter: Table.api.formatter.image},
                         {field: 'createtime', title: '创建时间', operate:'RANGE', addclass:'datetimerange', autocomplete:false},
                         {field: 'updatetime', title: '更新时间', operate:'RANGE', addclass:'datetimerange', autocomplete:false},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
@@ -94,10 +95,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
                 //         Backend.api.toastr.error(e.message);
                 //     }
                 // });
-                let serverurl = '101.35.112.113';
-                let ordercode =  md5(Date.now()+'-'+id, 16);
+               
                 
-                window.top.Fast.api.open('http://'+serverurl+'/paycenter/paycentersk.php?ordercode='+ordercode, '支付', {
+                window.top.Fast.api.open('product/pay/id/'+id, '支付', {
                     area: ["100%", "100%"]
                 });
                

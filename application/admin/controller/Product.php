@@ -31,6 +31,33 @@ class Product extends Backend
         $this->userTempModel = new \app\admin\model\Usertemp;
     }
 
+    /**
+     * 查看
+     */
+    public function index()
+    {
+        //设置过滤方法
+        $this->request->filter(['strip_tags', 'trim']);
+        if ($this->request->isAjax()) {
+            //如果发送的来源是Selectpage，则转发到Selectpage
+            if ($this->request->request('keyField')) {
+                return $this->selectpage();
+            }
+            list($where, $sort, $order, $offset, $limit) = $this->buildparams();
+            $list = $this->model->alias("m")
+                ->join(["fa_temple"=>"t"],"t.id = m.temp_id")
+                ->field("m.*, t.name, t.exa_image")
+                ->where($where)
+                ->order($sort, $order)
+                ->paginate($limit);
+
+            $result = array("total" => $list->total(), "rows" => $list->items());
+
+            return json($result);
+        }
+        return $this->view->fetch();
+    }
+
     public function shop()
     {
         # code...
@@ -92,7 +119,7 @@ class Product extends Backend
                 'updatetime'=>date("Y-m-d H:i:s"),
                 'weigh'=>10,
                 'default_data'=>'{}',
-                'purchase_id'=>$logResult['id']
+                'purchaselog_id'=>$logResult['id']
             ];
             $result = $this->userTempModel->allowField(true)->save($usertemp);
             Db::commit();
@@ -114,12 +141,44 @@ class Product extends Backend
         
     }
 
-    public function pay()
+    public function pay($id=null)
     {
-        # code...
-        // echo '111';
-        // echo \addons\epay\library\Service::submitOrder("99.9", "4646", "wechat", "订单标题", "回调地址", "返回地址", "web");
+        $auth = Auth::instance();
+        $admin_id = $auth->isLogin() ? $auth->id : 0;
+        if($admin_id==0){
+            $this->error("请先登录");
+        }
+
+        $product = $this->model->get(intval($id));
+        if(!$id || !$product ){
+            $this->error("购买的产品不存在");
+        }
+
+        $lastlog = $this->buyLogModel
+            ->where('product_id', $product['id'])
+            ->where('admin_id', $admin_id)
+            ->find();
+        if($lastlog){
+            $this->error("您已购买该产品，请勿重复购买");
+        }
+
+        $serverurl = '101.35.112.113';
         
+        $ordercode = substr(md5(time().'-'.$id.'-'.$admin_id), 8, 24);
+        // echo $ordercode;
+        $url = "http://".$serverurl."/paycenter/paycentersk.php?ordercode=".$ordercode;
+        $ch = curl_init();
+        $timeout = 5;
+        
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+        $contents = curl_exec($ch);
+        curl_close($ch);
+
+        return $contents;
+        // return $url;
+        // return json($ordercode);
     }
 
     /**
