@@ -17,6 +17,8 @@ class Printlog extends Backend
      * @var \app\admin\model\Printlog
      */
     protected $model = null;
+    protected $dataLimit = 'auth';
+    protected $dataLimitField = 'print_admin_id';
 
     public function _initialize()
     {
@@ -25,6 +27,33 @@ class Printlog extends Backend
 
     }
 
+    /**
+     * 查看
+     */
+    public function index()
+    {
+        //设置过滤方法
+        $this->request->filter(['strip_tags', 'trim']);
+        if ($this->request->isAjax()) {
+            //如果发送的来源是Selectpage，则转发到Selectpage
+            if ($this->request->request('keyField')) {
+                return $this->selectpage();
+            }
+            list($where, $sort, $order, $offset, $limit) = $this->buildparams();
+            $list = $this->model->alias("m")
+                ->join(["fa_temple"=>"t"],"t.id = m.temp_id")
+                ->join(["fa_admin"=>"admin"],"admin.id = m.print_admin_id")
+                ->field("m.*, t.name, t.exa_image, admin.username admin_name")
+                ->where($where)
+                ->order($sort, $order)
+                ->paginate($limit);
+
+            $result = array("total" => $list->total(), "rows" => $list->items());
+
+            return json($result);
+        }
+        return $this->view->fetch();
+    }
 
 
     /**

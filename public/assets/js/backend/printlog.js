@@ -25,11 +25,13 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                 columns: [
                     [
                         {checkbox: true},
-                        {field: 'id', title: __('Id')},
-                        {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false},
-                        {field: 'admin_id', title: __('Admin_id')},
-                        {field: 'temp_id', title: __('Temp_id')},
-                        {field: 'temp_data', title: __('Temp_data')},
+                        
+                        {field: 'name', title: '模板'},
+                        {field: 'admin_name', title: '打印人'},
+                        {field: 'createtime', title: '打印时间', operate:'RANGE', addclass:'datetimerange', autocomplete:false},
+                        
+                        
+                        
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]
                 ]

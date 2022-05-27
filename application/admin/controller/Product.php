@@ -100,7 +100,6 @@ class Product extends Backend
             $this->error("您已购买该产品，请勿重复购买");
         }
         
-       
         
         Db::startTrans();
         try {
@@ -167,16 +166,21 @@ class Product extends Backend
         $ordercode = substr(md5(time().'-'.$id.'-'.$admin_id), 8, 24);
         // echo $ordercode;
         $url = "http://".$serverurl."/paycenter/paycentersk.php?ordercode=".$ordercode;
-        $ch = curl_init();
-        $timeout = 5;
-        
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
-        $contents = curl_exec($ch);
-        curl_close($ch);
 
-        return $contents;
+        $this->view->assign("url",$url);
+        // $this->assignconfig('list',$list);
+        return $this->view->fetch();
+
+        // $ch = curl_init();
+        // $timeout = 5;
+        
+        // curl_setopt($ch, CURLOPT_URL, $url);
+        // curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        // curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+        // $contents = curl_exec($ch);
+        // curl_close($ch);
+
+        // return $contents;
         // return $url;
         // return json($ordercode);
     }

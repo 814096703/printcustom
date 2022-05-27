@@ -197,9 +197,29 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','hpbundle'], function 
                 }
             });
             console.log('tmp_data', tmp_data);
+            const saveprintlog = () => {
+                $.ajax({
+                    async: true,
+                    type: "POST",
+                    url:"printlog/add",
+                    data: {
+                        'row[temp_id]': temp['id'],
+                        'row[temp_data]': JSON.stringify(tmp_data)
+                    },
+                    success: function (ret) {
+                        if(ret.code ==1){
+                            layer.msg(ret.msg);
+                        }else layer.msg(ret.msg);
+                        
+                    }, error: function (e) {
+                        Backend.api.toastr.error(e.message);
+                    }
+                });
+            }
             
             $(".print_field").change(changePrintField);
             $("#handleprintmx1").click(function(){
+                saveprintlog();
                 filterArr = eleArr.filter((e) => {
                     if(!Object.hasOwnProperty.call(e['options'], 'field') || e['options']['field'].split('-').pop()!=='nonprinting'){
                         return e;
@@ -208,6 +228,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','hpbundle'], function 
                 tempdataObj['panels'][0]['printElements'] = filterArr;
                 let print_htemp = new hiprint.PrintTemplate({template: tempdataObj});
                 print_htemp.print(tmp_data);
+                
             });
             $('#savedefaultdata').click(() => {
                 $.ajax({
