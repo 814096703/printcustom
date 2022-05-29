@@ -96,51 +96,51 @@ class Product extends Backend
             ->where('product_id', $product['id'])
             ->where('admin_id', $admin_id)
             ->find();
-        if($lastlog){
+
+        if($lastlog && $lastlog['ispay']==1){
             $this->error("您已购买该产品，请勿重复购买");
         }
-        
-        
-        Db::startTrans();
-        try {
-            $newlog = [
-                'purchase_price'=>$product['price'],
-                'product_id'=>$product['id'],
-                'admin_id'=>$admin_id,
-                'createtime'=>date("Y-m-d H:i:s"),
+
+        if(!$lastlog){
+            Db::startTrans();
+            try {
+                $newlog = [
+                    'purchase_price'=>$product['price'],
+                    'product_id'=>$product['id'],
+                    'admin_id'=>$admin_id,
+                    'createtime'=>date("Y-m-d H:i:s"),
+                    'ispay'=>0,
+                ];
+                $lastlog = $this->buyLogModel->allowField(true)->save($newlog);
                 
-            ];
-            $logResult = $this->buyLogModel->allowField(true)->save($newlog);
-            $usertemp = [
-                'temp_id'=>$product['temp_id'],
-                'admin_id'=>$admin_id,
-                'createtime'=>date("Y-m-d H:i:s"),
-                'updatetime'=>date("Y-m-d H:i:s"),
-                'weigh'=>10,
-                'default_data'=>'{}',
-                'purchaselog_id'=>$logResult['id']
-            ];
-            $result = $this->userTempModel->allowField(true)->save($usertemp);
-            Db::commit();
-        } catch (ValidateException $e) {
-            Db::rollback();
-            $this->error($e->getMessage());
-        } catch (PDOException $e) {
-            Db::rollback();
-            $this->error($e->getMessage());
-        } catch (Exception $e) {
-            Db::rollback();
-            $this->error($e->getMessage());
+                Db::commit();
+            } catch (ValidateException $e) {
+                Db::rollback();
+                $this->error($e->getMessage());
+            } catch (PDOException $e) {
+                Db::rollback();
+                $this->error($e->getMessage());
+            } catch (Exception $e) {
+                Db::rollback();
+                $this->error($e->getMessage());
+            }
         }
-        if ($result !== false) {
-            $this->success('购买成功！');
+        
+        $encryptInfo = $product['price'].'-'.$product['id'].'-'.$admin_id;
+        $key = 'camesoft';
+        $orderCode = openssl_encrypt($encryptInfo, 'DES-ECB', $key);
+
+        if ($lastlog !== false) {
+           
+            $this->success($orderCode);
         } else {
             $this->error('购买出错');
         }
         
     }
 
-    public function pay($id=null)
+    // 检查订单是否已支付完成
+    public function ispay($id=null)
     {
         $auth = Auth::instance();
         $admin_id = $auth->isLogin() ? $auth->id : 0;
@@ -157,32 +157,34 @@ class Product extends Backend
             ->where('product_id', $product['id'])
             ->where('admin_id', $admin_id)
             ->find();
-        if($lastlog){
-            $this->error("您已购买该产品，请勿重复购买");
+
+        if($lastlog && $lastlog['ispay']==1){
+            $where = array('admin_id'=>$admin_id, 'purchaselog_id', $lastlog['id']);
+            $checkUsertemp = $this->userTempModel->where($where)->find();
+            if(!$checkUsertemp){
+                $usertemp = [
+                    'temp_id'=>$product['temp_id'],
+                    'admin_id'=>$admin_id,
+                    'createtime'=>date("Y-m-d H:i:s"),
+                    'updatetime'=>date("Y-m-d H:i:s"),
+                    'weigh'=>10,
+                    'default_data'=>'{}',
+                    'purchaselog_id'=>$lastlog['id']
+                ];
+                $result = $this->userTempModel->allowField(true)->save($usertemp);
+                if ($result) {
+           
+                    $this->success('请在我的模板中查看');
+                } else {
+                    $this->error('添加用户模板出错');
+                }
+            }
         }
 
-        $serverurl = '101.35.112.113';
         
-        $ordercode = substr(md5(time().'-'.$id.'-'.$admin_id), 8, 24);
-        // echo $ordercode;
-        $url = "http://".$serverurl."/paycenter/paycentersk.php?ordercode=".$ordercode;
-
-        $this->view->assign("url",$url);
-        // $this->assignconfig('list',$list);
-        return $this->view->fetch();
-
-        // $ch = curl_init();
-        // $timeout = 5;
+        // $desInfo = openssl_decrypt('DyZclSR3yRZgXWiLgY9+gw==', 'DES-ECB', 'camesoft');
+        // $this->success($desInfo);
         
-        // curl_setopt($ch, CURLOPT_URL, $url);
-        // curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        // curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
-        // $contents = curl_exec($ch);
-        // curl_close($ch);
-
-        // return $contents;
-        // return $url;
-        // return json($ordercode);
     }
 
     /**

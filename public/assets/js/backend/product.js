@@ -1,4 +1,4 @@
-define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customElementTypeProvider', 'md5'], function ($, undefined, Backend, Table, Form) {
+define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customElementTypeProvider'], function ($, undefined, Backend, Table, Form) {
 
     var Controller = {
         index: function () {
@@ -82,24 +82,46 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
                
             }
             window.buy=function(id){
-                
-                // $.ajax({
-                //     async: false,
-                //     url:"product/buy/id/"+id,
-                //     success: function (ret) {
-                //         if(ret.code ==1){
-                //             layer.msg(ret.msg);
-                //         }else layer.msg(ret.msg);
+
+                let encryptInfo = '';
+                $.ajax({
+                    async: false,
+                    url:"product/buy/id/"+id,
+                    success: function (ret) {
+                        if(ret.code ==1){
+                            encryptInfo = ret.msg;
+                            layer.msg(ret.msg);
+
+                        }else layer.msg(ret.msg);
                         
-                //     }, error: function (e) {
-                //         Backend.api.toastr.error(e.message);
-                //     }
-                // });
-               
-                
-                window.top.Fast.api.open('product/pay/id/'+id, '支付', {
-                    area: ["100%", "100%"]
+                    }, error: function (e) {
+                        Backend.api.toastr.error(e.message);
+                    }
                 });
+                window.top.Fast.api.open('http://www.baidu.com', '支付', {
+                    area: ["100%", "100%"],
+                    cancel:function(value){
+                        console.log('baidu');
+                        $.ajax({
+                            async: false,
+                            url:"product/ispay/id/"+id,
+                            success: function (ret) {
+                                if(ret.code ==1){
+                                    
+                                    layer.msg(ret.msg);
+        
+                                }else layer.msg(ret.msg);
+                                
+                            }, error: function (e) {
+                                Backend.api.toastr.error(e.message);
+                            }
+                        });
+                    }
+                });
+               
+                // window.top.Fast.api.open('http://'+serverurl+'/paycenter/paycentersk.php?ordercode='+ordercode, '支付', {
+                //     area: ["100%", "100%"]
+                // });
                
             }
            

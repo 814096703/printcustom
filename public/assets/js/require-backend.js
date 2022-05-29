@@ -67,7 +67,7 @@ require.config({
         'jspdf':'../libs/hiprint/plugins/jspdf/jspdf.min',
         'customElementTypeProvider': '../libs/hiprint/custom_test/custom-etype-provider',
         'customPrintJson': '../libs/hiprint/custom_test/custom-print-json',
-        'md5': '../libs/md5/md5'
+        // 'md5': '../libs/md5/md5'
     },
     // shim依赖配置
     shim: {
