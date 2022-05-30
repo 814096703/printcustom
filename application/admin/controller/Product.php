@@ -131,11 +131,19 @@ class Product extends Backend
         $orderCode = openssl_encrypt($encryptInfo, 'DES-ECB', $key);
 
         if ($lastlog !== false) {
-           
-            $this->success($orderCode);
+            // base64 urlsafe encode
+            $find = array('+', '/');
+            $replace = array('-', '_');
+            $orderCode = str_replace($find, $replace, $orderCode);
+            // $this->success($orderCode);
         } else {
             $this->error('购买出错');
         }
+        $serverurl = '101.35.112.113';
+        $pay_url = 'http://'.$serverurl.'/paycenter/paycentersk.php?ordercode='.$orderCode.'&p_name='.$product['p_name'];
+        $this->view->assign("pay_url", $pay_url);
+        $this->assignconfig('pay_url', $pay_url);
+        return $this->view->fetch();
         
     }
 
@@ -159,28 +167,28 @@ class Product extends Backend
             ->find();
 
         if($lastlog && $lastlog['ispay']==1){
-            $where = array('admin_id'=>$admin_id, 'purchaselog_id', $lastlog['id']);
-            $checkUsertemp = $this->userTempModel->where($where)->find();
-            if(!$checkUsertemp){
-                $usertemp = [
-                    'temp_id'=>$product['temp_id'],
-                    'admin_id'=>$admin_id,
-                    'createtime'=>date("Y-m-d H:i:s"),
-                    'updatetime'=>date("Y-m-d H:i:s"),
-                    'weigh'=>10,
-                    'default_data'=>'{}',
-                    'purchaselog_id'=>$lastlog['id']
-                ];
-                $result = $this->userTempModel->allowField(true)->save($usertemp);
-                if ($result) {
-           
-                    $this->success('请在我的模板中查看');
-                } else {
-                    $this->error('添加用户模板出错');
-                }
+            // $where = array('admin_id'=>$admin_id, 'purchaselog_id', $lastlog['id']);
+            // $checkUsertemp = $this->userTempModel->where($where)->find();
+            // if(!$checkUsertemp){
+            $usertemp = [
+                'temp_id'=>$product['temp_id'],
+                'admin_id'=>$admin_id,
+                'createtime'=>date("Y-m-d H:i:s"),
+                'updatetime'=>date("Y-m-d H:i:s"),
+                'weigh'=>10,
+                'default_data'=>'{}',
+                'purchaselog_id'=>$lastlog['id']
+            ];
+            $result = $this->userTempModel->allowField(true)->save($usertemp);
+            if ($result) {
+        
+                $this->success('购买成功，请在我的模板中查看');
+            } else {
+                $this->error('添加用户模板出错');
             }
+            // }
         }else{
-            $this->error('请先购买');
+            $this->error('购买未完成');
         }
 
         
