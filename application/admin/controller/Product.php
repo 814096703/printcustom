@@ -179,6 +179,8 @@ class Product extends Backend
                     $this->error('添加用户模板出错');
                 }
             }
+        }else{
+            $this->error('请先购买');
         }
 
         
