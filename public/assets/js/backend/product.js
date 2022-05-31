@@ -81,69 +81,41 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
                 });
                
             }
-            window.buy=function(id){
-                window.top.Fast.api.open("product/buy/id/"+id, '支付', {
-                    area: ["100%", "100%"],
-                    cancel:function(){
-                        // console.log('baidu');
-                        $.ajax({
-                            async: false,
-                            url:"product/ispay/id/"+id,
-                            success: function (ret) {
-                                if(ret.code ==1){
+            window.buy=function(id, price){
+                if(Number(price)>0){
+                    window.top.Fast.api.open("product/buy/id/"+id, '支付', {
+                        area: ["100%", "100%"],
+                        cancel:function(){
+                            // console.log('baidu');
+                            $.ajax({
+                                async: false,
+                                url:"product/ispay/id/"+id,
+                                success: function (ret) {
+                                    if(ret.code ==1){
+                                        
+                                        layer.msg(ret.msg);
+            
+                                    }else layer.msg(ret.msg);
                                     
-                                    layer.msg(ret.msg);
-        
-                                }else layer.msg(ret.msg);
-                                
-                            }, error: function (e) {
-                                Backend.api.toastr.error(e.message);
-                            }
-                        });
-                    }
-                })
-                // $.ajax({
-                //     async: false,
-                //     url:"product/buy/id/"+id,
-                //     success: function (ret) {
-                //         if(ret.code ==1){
-                //             let serverurl = '101.35.112.113';
-                //             let ordercode = ret.msg;
-                //             // console.log('ordercode', 'http://'+serverurl+'/paycenter/paycentersk.php?ordercode='+ordercode+'&p_name='+p_name);
-                //             // layer.msg(ret.msg);
-                //             window.top.Fast.api.open('http://'+serverurl+'/paycenter/paycentersk.php?ordercode='+ordercode+'&p_name='+p_name, '支付', {
-                //                 area: ["100%", "100%"],
-                //                 type: 2,
-                //                 cancel:function(value){
-                //                     // console.log('baidu');
-                //                     $.ajax({
-                //                         async: false,
-                //                         url:"product/ispay/id/"+id,
-                //                         success: function (ret) {
-                //                             if(ret.code ==1){
-                                                
-                //                                 layer.msg(ret.msg);
-                    
-                //                             }else layer.msg(ret.msg);
-                                            
-                //                         }, error: function (e) {
-                //                             Backend.api.toastr.error(e.message);
-                //                         }
-                //                     });
-                //                 }
-                //             });
-
-                //         }else layer.msg(ret.msg);
-                        
-                //     }, error: function (e) {
-                //         Backend.api.toastr.error(e.message);
-                //     }
-                // });
+                                }, error: function (e) {
+                                    Backend.api.toastr.error(e.message);
+                                }
+                            });
+                        }
+                    })
+                }else{
+                    $.ajax({
+                        url:"product/buy/id/"+id,
+                        success: function (ret) {
+                            if(ret.code ==1){
+                                layer.msg(ret.msg);
+                            }else layer.msg(ret.msg);
+                        }, error: function (e) {
+                            Backend.api.toastr.error(e.message);
+                        }
+                    });
+                }
                 
-               
-                // window.top.Fast.api.open('http://'+serverurl+'/paycenter/paycentersk.php?ordercode='+ordercode, '支付', {
-                //     area: ["100%", "100%"]
-                // });
                
             }
            

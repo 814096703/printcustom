@@ -101,7 +101,9 @@ class Product extends Backend
         }
         
         if($product['price']==0){
-            
+            if($lastlog){
+                
+            }
         }
 
         
@@ -128,7 +130,41 @@ class Product extends Backend
         if($lastlog && $lastlog['ispay']==1){
             $this->error("您已购买该产品，请勿重复购买");
         }
-
+        if ($this->request->isAjax()) {
+            
+            if($product['price']==0){
+                if(!$lastlog){
+                    $newlog = [
+                        'purchase_price'=>$product['price'],
+                        'product_id'=>$product['id'],
+                        'admin_id'=>$admin_id,
+                        'createtime'=>date("Y-m-d H:i:s"),
+                        'ispay'=>1,
+                    ];
+                    $lastlog = $this->buyLogModel->allowField(true)->save($newlog);
+                }
+                $usertemp = [
+                    'temp_id'=>$product['temp_id'],
+                    'admin_id'=>$admin_id,
+                    'createtime'=>date("Y-m-d H:i:s"),
+                    'updatetime'=>date("Y-m-d H:i:s"),
+                    'weigh'=>10,
+                    'default_data'=>'{}',
+                    'purchaselog_id'=>$lastlog['id']
+                ];
+                $result = $this->userTempModel->allowField(true)->save($usertemp);
+                if ($result) {
+            
+                    $this->success('在我的模板中查看');
+                } else {
+                    $this->error('添加用户模板出错');
+                }
+                
+            }else{
+                $this->error("请购买");
+            }
+        }
+        
         if(!$lastlog){
             Db::startTrans();
             try {
@@ -153,6 +189,8 @@ class Product extends Backend
                 $this->error($e->getMessage());
             }
         }
+
+        
         
         $encryptInfo = $product['price'].'-'.$product['id'].'-'.$admin_id;
         $key = 'camesoft';
