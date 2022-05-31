@@ -186,8 +186,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','hpbundle'], function 
                     }
                     
                     let field_div = `
-                        <label class="control-label col-xs-12 col-sm-1" style="margin:5px 0px">${title}:</label>
-                        <div class="col-xs-12 col-sm-3" style="margin:2px 0px">
+                        <label class="control-label col-xs-12 col-sm-2" style="margin:5px 0px">${title}:</label>
+                        <div class="col-xs-12 col-sm-4" style="margin:2px 0px">
                             <input id="field_${ele.field}" class="form-control print_field" name="field_${ele.field}" type="text" value="${value}">
                         </div>
                     `;
