@@ -41,6 +41,13 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
 
             // 为表格绑定事件
             Table.api.bindevent(table);
+
+            $("#btn-copy").click(() => {
+                let ids = Table.api.selectedids(table);
+                
+                // console.log('IDS', ids);
+                window.top.Fast.api.open('temple/copy/ids/'+ (ids.length>0? ids[0]: ''), '复制模板');
+            })
         },
         add: function () {
             Controller.api.bindevent();
@@ -312,6 +319,33 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
             
             pageto('#p_mx1',0);
             
+        },
+        copy: function() {
+            Controller.api.bindevent();
+            const initFielddata = Controller.api.initFielddata;
+            const setFielddata = Controller.api.setFielddata;
+            const setDownFielddata = Controller.api.setDownFielddata;
+            $('#designTemple').click(function () {
+                let tempdata = $("#c-tempdata").val();
+                // 保存当前模板数据，方便打开的窗口使用（模板数据过多，不宜get传输）
+                window.sessionStorage.setItem("tempdata", tempdata);
+                window.top.Fast.api.open('temple/custom', '模板设计', {
+                    area: ["100%", "100%"],
+                    callback:function(tempdata){
+                        // console.log('tempdata', tempdata);
+                        $("#c-tempdata").prop('value', tempdata);
+                        initFielddata();
+                    }
+                });
+            }); 
+
+            $("#setFielddata").click(() => {
+                setFielddata();
+            });
+
+            $("#saveFielddata").click(() => {
+                setDownFielddata();
+            })
         },
         api: {
             bindevent: function () {
