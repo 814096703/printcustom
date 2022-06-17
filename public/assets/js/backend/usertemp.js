@@ -147,9 +147,497 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','hpbundle'], function 
         print: function () {
             console.log('ids', Config.ids);
             console.log('temp', Config.temp);
+            // let input_test = {
+            //     "panels": [{
+            //         "index": 0,
+            //         "paperType": "A4",
+            //         "height": 297,
+            //         "width": 210,
+            //         "paperHeader": 43.5,
+            //         "paperFooter": 801,
+            //         "printElements": [{
+            //             "options": {
+            //                 "left": 94.5,
+            //                 "top": 93,
+            //                 "height": 9.75,
+            //                 "width": 30,
+            //                 "field": "input_test",
+            //                 "testData": "测",
+                            
+            //             },
+            //             "printElementType": {
+            //                 "type": "text",
+            //                 "formatter":function(title,value,options,templateData,target){ 
+            //                     return '<input type="text" name="fname">'; 
+            //                 }
+            //             }
+            //         }],
+            //         "paperNumberLeft": 565,
+            //         "paperNumberTop": 819
+            //     }]
+            // }
+            let input_test = {
+                "panels": [{
+                    "index": 0,
+                    "width": 210,
+                    "height": 128,
+                    "paperFooter": 362.8346456692914,
+                    "paperHeader": 43.5,
+                    "printElements": [{
+                        "options": {
+                            "src": "/uploads/20220520/17b674d0a29616b1107dc9db63a87fc4.jpg",
+                            "top": 0,
+                            "left": 0,
+                            "field": "b-nonprinting",
+                            "width": 594,
+                            "height": 358.5
+                        },
+                        "printElementType": {
+                            "type": "image"
+                        }
+                    }, {
+                        "options": {
+                            "top": 90,
+                            "left": 171,
+                            "field": "lddw",
+                            "fixed": true,
+                            "width": 346.5,
+                            "height": 9.75,
+                            "fontSize": 12,
+                            "testData": "立档单位",
+                            "fontFamily": "SimSun",
+                            "fontWeight": "700"
+                        },
+                        "printElementType": {
+                            "type": "text",
+                            "formatter":function(title,value,options,templateData,target){ 
+                                return `<input type="text" name="${options.field}" style="width: ${options.width}pt; border-style: none;" value="${value}">`;
+                            }
+                        }
+                    }, {
+                        "options": {
+                            "top": 123,
+                            "left": 291,
+                            "field": "fkpz",
+                            "fixed": true,
+                            "width": 40.5,
+                            "height": 9.75,
+                            "fontSize": 11.25,
+                            "testData": "付款",
+                            "fontWeight": "700"
+                        },
+                        "printElementType": {
+                            "type": "text",
+                            "formatter":function(title,value,options,templateData,target){ 
+                                return `<input type="text" name="${options.field}" style="width: ${options.width}pt; border-style: none;" value="${value}">`;
+                            }
+                        }
+                    }, {
+                        "options": {
+                            "top": 123,
+                            "left": 279,
+                            "field": "fk_check",
+                            "fixed": true,
+                            "width": 15,
+                            "height": 9.75,
+                            "fontSize": 11.25,
+                            "testData": "√",
+                            "fontWeight": "700"
+                        },
+                        "printElementType": {
+                            "type": "text",
+                            "formatter":function(title,value,options,templateData,target){ 
+                                return `<input type="checkbox" name="${options.field}" style="width: ${options.width}pt; border-style: none;" value="${value}">`;
+                            }
+                        }
+                    }, {
+                        "options": {
+                            "top": 123,
+                            "left": 390,
+                            "field": "zz_check",
+                            "fixed": true,
+                            "width": 16.5,
+                            "height": 9.75,
+                            "fontSize": 11.25,
+                            "testData": "√",
+                            "fontWeight": "700"
+                        },
+                        "printElementType": {
+                            "type": "text"
+                        }
+                    }, {
+                        "options": {
+                            "top": 123,
+                            "left": 181.5,
+                            "field": "skpz",
+                            "fixed": true,
+                            "width": 42,
+                            "height": 9.75,
+                            "fontSize": 11.25,
+                            "testData": "收款",
+                            "fontWeight": "700"
+                        },
+                        "printElementType": {
+                            "type": "text"
+                        }
+                    }, {
+                        "options": {
+                            "top": 123,
+                            "left": 457.5,
+                            "field": "ty_check",
+                            "fixed": true,
+                            "width": 12,
+                            "height": 9.75,
+                            "fontSize": 11.25,
+                            "testData": "√",
+                            "fontWeight": "700"
+                        },
+                        "printElementType": {
+                            "type": "text"
+                        }
+                    }, {
+                        "options": {
+                            "top": 123,
+                            "left": 169.5,
+                            "field": "sk_check",
+                            "fixed": true,
+                            "width": 15,
+                            "height": 9.75,
+                            "fontSize": 11.25,
+                            "testData": "√",
+                            "fontWeight": "700"
+                        },
+                        "printElementType": {
+                            "type": "text"
+                        }
+                    }, {
+                        "options": {
+                            "top": 151.5,
+                            "left": 297,
+                            "field": "start_day",
+                            "fixed": true,
+                            "width": 30,
+                            "height": 9.75,
+                            "fontSize": 11.25,
+                            "testData": "18",
+                            "textAlign": "center",
+                            "fontWeight": "700"
+                        },
+                        "printElementType": {
+                            "type": "text"
+                        }
+                    }, {
+                        "options": {
+                            "top": 151.5,
+                            "left": 364.5,
+                            "field": "end_year",
+                            "fixed": true,
+                            "width": 52.5,
+                            "height": 9.75,
+                            "fontSize": 11.25,
+                            "testData": "2020",
+                            "textAlign": "center",
+                            "fontWeight": "700"
+                        },
+                        "printElementType": {
+                            "type": "text"
+                        }
+                    }, {
+                        "options": {
+                            "top": 151.5,
+                            "left": 436.5,
+                            "field": "end_month",
+                            "fixed": true,
+                            "width": 27,
+                            "height": 9.75,
+                            "fontSize": 11.25,
+                            "testData": "8",
+                            "textAlign": "center",
+                            "fontWeight": "700"
+                        },
+                        "printElementType": {
+                            "type": "text"
+                        }
+                    }, {
+                        "options": {
+                            "top": 151.5,
+                            "left": 258,
+                            "field": "start_month",
+                            "fixed": true,
+                            "width": 27,
+                            "height": 9.75,
+                            "fontSize": 11.25,
+                            "testData": "7",
+                            "textAlign": "center",
+                            "fontWeight": "700"
+                        },
+                        "printElementType": {
+                            "type": "text"
+                        }
+                    }, {
+                        "options": {
+                            "top": 151.5,
+                            "left": 475.5,
+                            "field": "end_day",
+                            "fixed": true,
+                            "width": 30,
+                            "height": 9.75,
+                            "fontSize": 11.25,
+                            "testData": "22",
+                            "textAlign": "center",
+                            "fontWeight": "700"
+                        },
+                        "printElementType": {
+                            "type": "text"
+                        }
+                    }, {
+                        "options": {
+                            "top": 151.5,
+                            "left": 184.5,
+                            "field": "start_year",
+                            "fixed": true,
+                            "width": 52.5,
+                            "height": 9.75,
+                            "fontSize": 11.25,
+                            "testData": "2018",
+                            "textAlign": "center",
+                            "fontWeight": "700"
+                        },
+                        "printElementType": {
+                            "type": "text"
+                        }
+                    }, {
+                        "options": {
+                            "top": 180,
+                            "left": 379.5,
+                            "field": "ce",
+                            "fixed": true,
+                            "width": 120,
+                            "height": 9.75,
+                            "fontSize": 11.25,
+                            "testData": "1",
+                            "textAlign": "center",
+                            "fontWeight": "700"
+                        },
+                        "printElementType": {
+                            "type": "text"
+                        }
+                    }, {
+                        "options": {
+                            "top": 180,
+                            "left": 219,
+                            "field": "csSum",
+                            "fixed": true,
+                            "width": 43.5,
+                            "height": 9.75,
+                            "fontSize": 11.25,
+                            "testData": "10",
+                            "textAlign": "center",
+                            "fontWeight": "700"
+                        },
+                        "printElementType": {
+                            "type": "text"
+                        }
+                    }, {
+                        "options": {
+                            "top": 207,
+                            "left": 376.5,
+                            "field": "hsStart",
+                            "fixed": true,
+                            "width": 39,
+                            "height": 9.75,
+                            "fontSize": 11.25,
+                            "testData": "2",
+                            "textAlign": "center",
+                            "fontWeight": "700"
+                        },
+                        "printElementType": {
+                            "type": "text"
+                        }
+                    }, {
+                        "options": {
+                            "top": 207,
+                            "left": 219,
+                            "field": "hsSum",
+                            "fixed": true,
+                            "width": 43.5,
+                            "height": 9.75,
+                            "fontSize": 11.25,
+                            "testData": "12",
+                            "textAlign": "center",
+                            "fontWeight": "700"
+                        },
+                        "printElementType": {
+                            "type": "text"
+                        }
+                    }, {
+                        "options": {
+                            "top": 207,
+                            "left": 462,
+                            "field": "hsEnd",
+                            "fixed": true,
+                            "width": 42,
+                            "height": 9.75,
+                            "fontSize": 11.25,
+                            "testData": "4",
+                            "textAlign": "center",
+                            "fontWeight": "700"
+                        },
+                        "printElementType": {
+                            "type": "text"
+                        }
+                    }, {
+                        "options": {
+                            "top": 232.5,
+                            "left": 169.5,
+                            "field": "fz",
+                            "fixed": true,
+                            "width": 346.5,
+                            "height": 9.75,
+                            "fontSize": 11.25,
+                            "testData": "附注",
+                            "fontWeight": "600"
+                        },
+                        "printElementType": {
+                            "type": "text"
+                        }
+                    }, {
+                        "options": {
+                            "top": 276,
+                            "left": 373.5,
+                            "field": "案卷号",
+                            "fixed": true,
+                            "width": 49.5,
+                            "height": 9.75,
+                            "fontSize": 11.25,
+                            "testData": "123",
+                            "textAlign": "center",
+                            "fontWeight": "700"
+                        },
+                        "printElementType": {
+                            "type": "text"
+                        }
+                    }, {
+                        "options": {
+                            "top": 276,
+                            "left": 261,
+                            "field": "mlh",
+                            "fixed": true,
+                            "width": 49.5,
+                            "height": 9.75,
+                            "fontSize": 11.25,
+                            "testData": "123",
+                            "textAlign": "center",
+                            "fontWeight": "700"
+                        },
+                        "printElementType": {
+                            "type": "text"
+                        }
+                    }, {
+                        "options": {
+                            "top": 276,
+                            "left": 486,
+                            "field": "bgh",
+                            "fixed": true,
+                            "width": 49.5,
+                            "height": 9.75,
+                            "fontSize": 11.25,
+                            "testData": "123",
+                            "textAlign": "center",
+                            "fontWeight": "700"
+                        },
+                        "printElementType": {
+                            "type": "text"
+                        }
+                    }, {
+                        "options": {
+                            "top": 276,
+                            "left": 150,
+                            "field": "qzh",
+                            "fixed": true,
+                            "width": 49.5,
+                            "height": 9.75,
+                            "fontSize": 11.25,
+                            "testData": "123",
+                            "textAlign": "center",
+                            "fontWeight": "700"
+                        },
+                        "printElementType": {
+                            "type": "text"
+                        }
+                    }, {
+                        "options": {
+                            "top": 307.5,
+                            "left": 367.5,
+                            "field": "zdr",
+                            "fixed": true,
+                            "width": 52.5,
+                            "height": 9.75,
+                            "fontSize": 11.25,
+                            "testData": "装订人",
+                            "fontWeight": "700"
+                        },
+                        "printElementType": {
+                            "type": "text"
+                        }
+                    }, {
+                        "options": {
+                            "top": 307.5,
+                            "left": 252,
+                            "field": "kj",
+                            "fixed": true,
+                            "width": 66,
+                            "height": 9.75,
+                            "fontSize": 11.25,
+                            "testData": "会计",
+                            "fontWeight": "700"
+                        },
+                        "printElementType": {
+                            "type": "text"
+                        }
+                    }, {
+                        "options": {
+                            "top": 307.5,
+                            "left": 484.5,
+                            "field": "bgnx",
+                            "fixed": true,
+                            "width": 43.5,
+                            "height": 9.75,
+                            "fontSize": 11.25,
+                            "testData": "3",
+                            "textAlign": "center",
+                            "fontWeight": "700"
+                        },
+                        "printElementType": {
+                            "type": "text"
+                        }
+                    }, {
+                        "options": {
+                            "top": 307.5,
+                            "left": 138,
+                            "field": "cwzg",
+                            "fixed": true,
+                            "width": 58.5,
+                            "height": 9.75,
+                            "fontSize": 11.25,
+                            "testData": "主管",
+                            "fontWeight": "700"
+                        },
+                        "printElementType": {
+                            "type": "text"
+                        }
+                    }],
+                    "paperNumberTop": 340,
+                    "paperNumberLeft": 565
+                }]
+            }
             let temp = Config.temp;
             let row = Config.row;
             let tempdataObj = JSON.parse(temp['tempdata']);
+            let data_tmp = {
+                input_test: '555'
+            }
+            tempdataObj = input_test;
             let fielddataObj = JSON.parse(temp['fielddata']);
             let defaultdataObj = JSON.parse(row['default_data']);
             hiprint.init();
@@ -157,6 +645,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','hpbundle'], function 
             let htemp =  new hiprint.PrintTemplate({template: tempdataObj});
 
             $('#p_mx1').html(htemp.getHtml({}));
+            // $('#p_mx1').html(htemp.getHtml(data_tmp));
 
             // 字段开始
             let tmp_data = {};
@@ -227,6 +716,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','hpbundle'], function 
                 });
                 tempdataObj['panels'][0]['printElements'] = filterArr;
                 let print_htemp = new hiprint.PrintTemplate({template: tempdataObj});
+                console.log('print_htemp', print_htemp);
                 print_htemp.print(tmp_data);
                 
             });

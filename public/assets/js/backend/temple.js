@@ -44,153 +44,63 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
         },
         add: function () {
             Controller.api.bindevent();
+            const initFielddata = Controller.api.initFielddata;
+            const setFielddata = Controller.api.setFielddata;
+            const setDownFielddata = Controller.api.setDownFielddata;
             $('#designTemple').click(function () {
                 let tempdata = $("#c-tempdata").val();
+                // 保存当前模板数据，方便打开的窗口使用（模板数据过多，不宜get传输）
                 window.sessionStorage.setItem("tempdata", tempdata);
                 window.top.Fast.api.open('temple/custom', '模板设计', {
                     area: ["100%", "100%"],
                     callback:function(tempdata){
-                        console.log('tempdata', tempdata);
+                        // console.log('tempdata', tempdata);
                         $("#c-tempdata").prop('value', tempdata);
+                        initFielddata();
                     }
                 });
-            });
+            }); 
 
-            const changefielddata = () => {
-                let fielddataObj = {};
-
-                let tempdata = $("#c-tempdata").val();
-                let tempdataObj = tempdata? JSON.parse(tempdata): null;
-
-                let eleArr = tempdataObj? tempdataObj['panels'][0]['printElements']:[];
-                eleArr.forEach((ele) => {
-                    ele = ele['options'];
-                    if(Object.hasOwnProperty.call(ele, 'field')){
-                        fielddataObj[ele.field] = $("#field_"+ele.field).val();
-                    }
-                })
-                $("#c-fielddata").prop('value', JSON.stringify(fielddataObj));
-            }
             $("#setFielddata").click(() => {
-                $("#fieldinfo").empty();
-                if($('#fieldTop').css('display')!='none'){
-                    $('#fieldTop').hide()
-                    $("#fieldinfo").hide();
-                    
-                    return;
-                }
-                $('#fieldTop').show()
-                $("#fieldinfo").show();
-
-                let fielddata = $("#c-fielddata").val();
-                let fielddataObj = fielddata? JSON.parse(fielddata): {};
-
-                let tempdata = $("#c-tempdata").val();
-                let tempdataObj = tempdata? JSON.parse(tempdata): null;
-
-                let eleArr = tempdataObj? tempdataObj['panels'][0]['printElements']:[];
-                eleArr.forEach(ele => {
-                    ele = ele['options'];
-                    if(Object.hasOwnProperty.call(ele, 'field')){
-                        let value = ele.field;
-                        if(Object.hasOwnProperty.call(fielddataObj, ele.field)){
-                            value = fielddataObj[ele.field];
-                        }
-                        let field_div = `
-                            <label class="control-label col-xs-12 col-sm-2">${ele.field}:</label>
-                            <div class="col-xs-12 col-sm-4" style="margin-top:5px">
-                                <input id="field_${ele.field}" class="form-control customfield" name="field_${ele.field}" type="text" value="${value}">
-                            </div>
-                        `;
-                        $("#fieldinfo").append(field_div);
-                    }
-                });
-
-                $(".customfield").change(changefielddata)
+                setFielddata();
             });
-
-            
 
             $("#saveFielddata").click(() => {
-                changefielddata();
-                $('#fieldTop').hide()
-                $("#fieldinfo").hide();
-                // $("#fieldinfo").empty();
+                setDownFielddata();
             })
+            // $('.customfield').change(() => {
+            //     setDownFielddata();
+            // })
         },
         edit: function () {
             Controller.api.bindevent();
+            const initFielddata = Controller.api.initFielddata;
+            const setFielddata = Controller.api.setFielddata;
+            const setDownFielddata = Controller.api.setDownFielddata;
             $('#designTemple').click(function () {
                 let tempdata = $("#c-tempdata").val();
+                // 保存当前模板数据，方便打开的窗口使用（模板数据过多，不宜get传输）
                 window.sessionStorage.setItem("tempdata", tempdata);
                 window.top.Fast.api.open('temple/custom', '模板设计', {
                     area: ["100%", "100%"],
                     callback:function(tempdata){
-                        console.log('tempdata', tempdata);
+                        // console.log('tempdata', tempdata);
                         $("#c-tempdata").prop('value', tempdata);
+                        initFielddata();
                     }
                 });
-            });
-            const changefielddata = () => {
-                let fielddataObj = {};
-
-                let tempdata = $("#c-tempdata").val();
-                let tempdataObj = tempdata? JSON.parse(tempdata): null;
-
-                let eleArr = tempdataObj? tempdataObj['panels'][0]['printElements']:[];
-                eleArr.forEach((ele) => {
-                    ele = ele['options'];
-                    if(Object.hasOwnProperty.call(ele, 'field')){
-                        fielddataObj[ele.field] = $("#field_"+ele.field).val();
-                    }
-                })
-                $("#c-fielddata").prop('value', JSON.stringify(fielddataObj));
-            }
+            }); 
 
             $("#setFielddata").click(() => {
-                $("#fieldinfo").empty();
-                if($('#fieldTop').css('display')!='none'){
-                    $('#fieldTop').hide()
-                    $("#fieldinfo").hide();
-                    
-                    return;
-                }
-                $('#fieldTop').show()
-                $("#fieldinfo").show();
-
-                let fielddata = $("#c-fielddata").val();
-                let fielddataObj = fielddata? JSON.parse(fielddata): {};
-
-                let tempdata = $("#c-tempdata").val();
-                let tempdataObj = tempdata? JSON.parse(tempdata): null;
-
-                let eleArr = tempdataObj? tempdataObj['panels'][0]['printElements']:[];
-                eleArr.forEach(ele => {
-                    ele = ele['options'];
-                    if(Object.hasOwnProperty.call(ele, 'field')){
-                        let value = ele.field;
-                        if(Object.hasOwnProperty.call(fielddataObj, ele.field)){
-                            value = fielddataObj[ele.field];
-                        }
-                        let field_div = `
-                            <label class="control-label col-xs-12 col-sm-2">${ele.field}:</label>
-                            <div class="col-xs-12 col-sm-4" style="margin-top:5px">
-                                <input id="field_${ele.field}" class="form-control customfield" name="field_${ele.field}" type="text" value="${value}">
-                            </div>
-                        `;
-                        $("#fieldinfo").append(field_div);
-                    }
-                });
-                $(".customfield").change(changefielddata)
+                setFielddata();
             });
 
             $("#saveFielddata").click(() => {
-                changefielddata();
-                $('#fieldTop').hide();
-                $("#fieldinfo").hide();
-                // $("#fieldinfo").empty();
+                setDownFielddata();
             })
-            
+            // $('.customfield').change(() => {
+            //     setDownFielddata();
+            // })
         },
         custom: function() {
             var tempdata = window.sessionStorage.getItem("tempdata");
@@ -406,6 +316,98 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
         api: {
             bindevent: function () {
                 Form.api.bindevent($("form[role=form]"));
+            },
+            //根据模板数据初始化fielddata的值
+            initFielddata: () => {
+                let fielddataObj = {};
+
+                let tempdata = $("#c-tempdata").val();
+                let tempdataObj = tempdata? JSON.parse(tempdata): null;
+
+                let eleArr = tempdataObj? tempdataObj['panels'][0]['printElements']:[];
+                eleArr.forEach((ele) => {
+                    ele = ele['options'];
+                    if(Object.hasOwnProperty.call(ele, 'field')){
+                        fielddataObj[ele.field] = {
+                            name: ele.field,
+                            default_value: ele.field.split('-').pop()=='checkbox'? false: (ele['src'] || ele['testData'] || ''),
+                            use_default: true,
+                            hidden: false
+                        }
+                    }
+                })
+                $("#c-fielddata").prop('value', JSON.stringify(fielddataObj));
+            },
+            setFielddata: () => {
+                $("#fieldinfo").empty();
+                if($('#fieldTop').css('display')!='none'){
+                    $('#fieldTop').hide()
+                    $("#fieldinfo").hide();
+                    
+                    return;
+                }
+                $('#fieldTop').show()
+                $("#fieldinfo").show();
+
+                let fielddata = $("#c-fielddata").val();
+                let fielddataObj = fielddata? JSON.parse(fielddata): {};
+                let headDiv = `
+                <div class="row">
+                    <label class="control-label col-xs-12 col-sm-3">字段名</label>
+                    <label class="control-label col-xs-12 col-sm-3" style="text-align: left;">组件名</label>
+                    <label class="control-label col-xs-12 col-sm-2" style="text-align: left;">默认值</label>
+                    <label class="control-label col-xs-12 col-sm-2" style="text-align: left;">使用默认值</label>
+                    <label class="control-label col-xs-12 col-sm-2" style="text-align: left;">隐藏</label>   
+                </div> 
+                `;
+                $("#fieldinfo").append(headDiv);
+                // console.log('fielddataObj', fielddataObj);
+                for (const field in fielddataObj) {
+                    if (Object.hasOwnProperty.call(fielddataObj, field)) {
+                        const ele = fielddataObj[field];
+                        let default_value_html = (field.split('-').pop()=='checkbox')
+                                                ? `<input id="default_value_${field}" class="customfield" name="default_value_${field}" type="checkbox" ${ele.default_value? "checked": ""} >`
+                                                : `<input id="default_value_${field}" class="form-control customfield" name="default_value_${field}" type="text" value="${ele.default_value}">`;
+                        let field_div = `
+                        <div class="row">
+                            <label class="control-label col-xs-12 col-sm-3">${field}:</label>
+                            <div class="col-xs-12 col-sm-3">
+                                <input id="name_${field}" class="form-control customfield" name="name_${field}" type="text" value="${ele.name}">
+                            </div>
+                            <div class="col-xs-12 col-sm-2">
+                                `+default_value_html+`
+                            </div>
+                            <div class="col-xs-12 col-sm-2">
+                                <input type="checkbox" id="use_default_${field}" class="customfield" name="use_default_${field}" ${ele.use_default? "checked": ""}>
+                            </div>
+                            <div class="col-xs-12 col-sm-2">
+                                <input type="checkbox" id="hidden_${field}" class="customfield" name="hidden_${field}" ${ele.hidden? "checked": ""}>
+                            </div>
+                        </div>
+                        `;
+                        $("#fieldinfo").append(field_div);
+                    }
+                }
+                
+            },
+            setDownFielddata: () => {
+                let fielddata = $("#c-fielddata").val();
+                let fielddataObj = fielddata? JSON.parse(fielddata): {};
+                for (const field in fielddataObj) {
+                    if (Object.hasOwnProperty.call(fielddataObj, field)) {
+                       
+                        const ele = fielddataObj[field];
+                        ele.name=$('#name_'+field).val();
+                        ele.default_value=(field.split('-').pop()=='checkbox')? $('#default_value_'+field).is(':checked'): $('#default_value_'+field).val();
+                        ele.use_default=$('#use_default_'+field).is(':checked');
+                        ele.hidden=$('#hidden_'+field).prop('checked');
+                        console.log(ele.hidden, $('#hidden'+field).is(':checked'));
+                    }
+                }
+                $("#c-fielddata").prop('value', JSON.stringify(fielddataObj));
+                $('#fieldTop').hide();
+                $("#fieldinfo").hide();
+                $("#fieldinfo").empty();
             }
         }
     };
