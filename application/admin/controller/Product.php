@@ -29,6 +29,7 @@ class Product extends Backend
         $this->model = new \app\admin\model\Product;
         $this->buyLogModel = new \app\admin\model\Userpurchaselog;
         $this->userTempModel = new \app\admin\model\Usertemp;
+        $this->tempModel = new \app\admin\model\Temple;
     }
 
     /**
@@ -79,36 +80,6 @@ class Product extends Backend
         return json($row);
     }
 
-    public function buyFree($id){
-        $auth = Auth::instance();
-        $admin_id = $auth->isLogin() ? $auth->id : 0;
-        if($admin_id==0){
-            $this->error("请先登录");
-        }
-
-        $product = $this->model->get(intval($id));
-        if(!$id || !$product ){
-            $this->error("购买的产品不存在");
-        }
-
-        $lastlog = $this->buyLogModel
-            ->where('product_id', $product['id'])
-            ->where('admin_id', $admin_id)
-            ->find();
-
-        if($lastlog && $lastlog['ispay']==1){
-            $this->error("您已购买该产品，请勿重复购买");
-        }
-        
-        if($product['price']==0){
-            if($lastlog){
-                
-            }
-        }
-
-        
-    }
-
     public function buy($id)
     {
         $auth = Auth::instance();
@@ -121,36 +92,59 @@ class Product extends Backend
         if(!$id || !$product ){
             $this->error("购买的产品不存在");
         }
+        // 查询模板
+        $exist_temp = $this->userTempModel
+            ->where('temp_id', $product['temp_id'])
+            ->where('admin_id', $admin_id)
+            ->find();
+        if($exist_temp){
+            $this->error("您已拥有相同模板，请勿重复购买");
+        }
 
+        // 查询订单
         $lastlog = $this->buyLogModel
             ->where('product_id', $product['id'])
             ->where('admin_id', $admin_id)
             ->find();
 
-        if($lastlog && $lastlog['ispay']==1){
+        // 创建订单记录
+        if(!$lastlog){
+            $newlog = [
+                'purchase_price'=>$product['price'],
+                'product_id'=>$product['id'],
+                'admin_id'=>$admin_id,
+                'createtime'=>date("Y-m-d H:i:s"),
+                'ispay'=>0,
+            ];
+            $lastlog = $this->buyLogModel::create($newlog);
+            if(!$newlog){
+                $this->error("创建订单出错");
+            }
+        }
+
+        if($lastlog['ispay']==1){
             $this->error("您已购买该产品，请勿重复购买");
         }
+
+        // 免费的模板通过ajax完成
         if ($this->request->isAjax()) {
             
             if($product['price']==0){
-                if(!$lastlog){
-                    $newlog = [
-                        'purchase_price'=>$product['price'],
-                        'product_id'=>$product['id'],
-                        'admin_id'=>$admin_id,
-                        'createtime'=>date("Y-m-d H:i:s"),
-                        'ispay'=>1,
-                    ];
-                    $lastlog = $this->buyLogModel->allowField(true)->save($newlog);
-                }
+                $lastlog['ispay'] = 1;
+                $lastlog->save();
+                // 因为没有打开窗口的回调函数，所以在这里直接录入用户模板
+                $temp = $this->tempModel->where("id", $product['temp_id'])->find();
                 $usertemp = [
-                    'temp_id'=>$product['temp_id'],
+                    'temp_id'=>$temp['id'],
                     'admin_id'=>$admin_id,
                     'createtime'=>date("Y-m-d H:i:s"),
                     'updatetime'=>date("Y-m-d H:i:s"),
                     'weigh'=>10,
-                    'default_data'=>'{}',
-                    'purchaselog_id'=>$lastlog['id']
+                    'tempdata'=>$temp['tempdata'],
+                    'fielddata'=>$temp['fielddata'],
+                    'purchaselog_id'=>$lastlog['id'],
+                    'overdue_days'=>$product['overdue_days'],
+                    'shop_link'=>$product['shop_link']
                 ];
                 $result = $this->userTempModel->allowField(true)->save($usertemp);
                 if ($result) {
@@ -165,33 +159,7 @@ class Product extends Backend
             }
         }
         
-        if(!$lastlog){
-            Db::startTrans();
-            try {
-                $newlog = [
-                    'purchase_price'=>$product['price'],
-                    'product_id'=>$product['id'],
-                    'admin_id'=>$admin_id,
-                    'createtime'=>date("Y-m-d H:i:s"),
-                    'ispay'=>0,
-                ];
-                $lastlog = $this->buyLogModel->allowField(true)->save($newlog);
-                
-                Db::commit();
-            } catch (ValidateException $e) {
-                Db::rollback();
-                $this->error($e->getMessage());
-            } catch (PDOException $e) {
-                Db::rollback();
-                $this->error($e->getMessage());
-            } catch (Exception $e) {
-                Db::rollback();
-                $this->error($e->getMessage());
-            }
-        }
-
-        
-        
+        // 创建支付链接
         $encryptInfo = $product['price'].'-'.$product['id'].'-'.$admin_id;
         $key = 'camesoft';
         $orderCode = openssl_encrypt($encryptInfo, 'DES-ECB', $key);
@@ -232,37 +200,36 @@ class Product extends Backend
             ->where('admin_id', $admin_id)
             ->find();
 
-        if($lastlog && $lastlog['ispay']==1){
-            $where = array('admin_id'=>$admin_id, 'purchaselog_id'=>$lastlog['id']);
-            $checkUsertemp = $this->userTempModel->where($where)->find();
-            if(!$checkUsertemp){
-                $usertemp = [
-                    'temp_id'=>$product['temp_id'],
-                    'admin_id'=>$admin_id,
-                    'createtime'=>date("Y-m-d H:i:s"),
-                    'updatetime'=>date("Y-m-d H:i:s"),
-                    'weigh'=>10,
-                    'default_data'=>'{}',
-                    'purchaselog_id'=>$lastlog['id']
-                ];
-                $result = $this->userTempModel->allowField(true)->save($usertemp);
-                if ($result) {
-            
-                    $this->success('在我的模板中查看');
-                } else {
-                    $this->error('添加用户模板出错');
-                }
-            }else{
-                $this->success('已购买，请在我的模板中查看');
-            }
-            
-        }else{
-            $this->error('购买未完成');
+        if(!$lastlog){
+            $this->error("购买出错，购买记录不存在");
         }
 
+        if($lastlog['ispay']==0){
+            $this->error("支付失败未完成");
+        }
         
-        // $desInfo = openssl_decrypt('DyZclSR3yRZgXWiLgY9+gw==', 'DES-ECB', 'camesoft');
-        // $this->success($desInfo);
+        // 添加用户模板
+        $temp = $this->tempModel->where("id", $product['temp_id'])->find();
+        
+        $usertemp = [
+            'temp_id'=>$temp['id'],
+            'admin_id'=>$admin_id,
+            'createtime'=>date("Y-m-d H:i:s"),
+            'updatetime'=>date("Y-m-d H:i:s"),
+            'weigh'=>10,
+            'tempdata'=>$temp['tempdata'],
+            'fielddata'=>$temp['fielddata'],
+            'purchaselog_id'=>$lastlog['id'],
+            'overdue_days'=>$product['overdue_days'],
+            'shop_link'=>$product['shop_link']
+        ];
+        $result = $this->userTempModel->allowField(true)->save($usertemp);
+        if ($result) {
+    
+            $this->success('在我的模板中查看');
+        } else {
+            $this->error('添加用户模板出错');
+        }
         
     }
 
