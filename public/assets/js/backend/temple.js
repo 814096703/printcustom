@@ -46,7 +46,12 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
                 let ids = Table.api.selectedids(table);
                 
                 // console.log('IDS', ids);
-                window.top.Fast.api.open('temple/copy/ids/'+ (ids.length>0? ids[0]: ''), '复制模板');
+                window.top.Fast.api.open('temple/copy/ids/'+ (ids.length>0? ids[0]: ''), '复制模板', {
+                    callback: () => {
+                        console.log('inin', 1);
+                        table.bootstrapTable('refresh');
+                    }
+                });
             })
         },
         add: function () {
@@ -321,7 +326,6 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
             
         },
         copy: function() {
-            Controller.api.bindevent();
             const initFielddata = Controller.api.initFielddata;
             const setFielddata = Controller.api.setFielddata;
             const setDownFielddata = Controller.api.setDownFielddata;
@@ -346,6 +350,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
             $("#saveFielddata").click(() => {
                 setDownFielddata();
             })
+            Controller.api.bindevent();
         },
         api: {
             bindevent: function () {
@@ -353,24 +358,29 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
             },
             //根据模板数据初始化fielddata的值
             initFielddata: () => {
-                let fielddataObj = {};
+                let fielddataArr = [];
 
                 let tempdata = $("#c-tempdata").val();
-                let tempdataObj = tempdata? JSON.parse(tempdata): null;
-
-                let eleArr = tempdataObj? tempdataObj['panels'][0]['printElements']:[];
-                eleArr.forEach((ele) => {
-                    ele = ele['options'];
+               
+                let tempdataObj = tempdata.length>0? JSON.parse(tempdata): null;
+               
+                let eleArr = tempdataObj!=null? tempdataObj['panels'][0]['printElements']: [];
+                
+                eleArr.forEach((element, index) => {
+                    let ele = element['options'];
                     if(Object.hasOwnProperty.call(ele, 'field')){
-                        fielddataObj[ele.field] = {
+                        fielddataArr.push({
+                            field: ele.field,
                             name: ele.field,
                             default_value: ele.field.split('-').pop()=='checkbox'? false: (ele['src'] || ele['testData'] || ''),
                             use_default: true,
-                            hidden: false
-                        }
+                            hidden: false,
+                            sort_num: index+100, 
+                        })
                     }
                 })
-                $("#c-fielddata").prop('value', JSON.stringify(fielddataObj));
+               
+                $("#c-fielddata").prop('value', JSON.stringify(fielddataArr));
             },
             setFielddata: () => {
                 $("#fieldinfo").empty();
@@ -382,63 +392,63 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
                 }
                 $('#fieldTop').show()
                 $("#fieldinfo").show();
-
-                let fielddata = $("#c-fielddata").val();
-                let fielddataObj = fielddata? JSON.parse(fielddata): {};
                 let headDiv = `
                 <div class="row">
-                    <label class="control-label col-xs-12 col-sm-3">字段名</label>
-                    <label class="control-label col-xs-12 col-sm-3" style="text-align: left;">组件名</label>
+                    <label class="control-label col-xs-12 col-sm-2">字段名</label>
+                    <label class="control-label col-xs-12 col-sm-2" style="text-align: left;">组件名</label>
                     <label class="control-label col-xs-12 col-sm-2" style="text-align: left;">默认值</label>
                     <label class="control-label col-xs-12 col-sm-2" style="text-align: left;">使用默认值</label>
-                    <label class="control-label col-xs-12 col-sm-2" style="text-align: left;">隐藏</label>   
+                    <label class="control-label col-xs-12 col-sm-2" style="text-align: left;">隐藏</label> 
+                    <label class="control-label col-xs-12 col-sm-2" style="text-align: left;">排序</label>   
                 </div> 
                 `;
                 $("#fieldinfo").append(headDiv);
-                // console.log('fielddataObj', fielddataObj);
-                for (const field in fielddataObj) {
-                    if (Object.hasOwnProperty.call(fielddataObj, field)) {
-                        const ele = fielddataObj[field];
-                        let default_value_html = (field.split('-').pop()=='checkbox')
-                                                ? `<input id="default_value_${field}" class="customfield" name="default_value_${field}" type="checkbox" ${ele.default_value? "checked": ""} >`
-                                                : `<input id="default_value_${field}" class="form-control customfield" name="default_value_${field}" type="text" value="${ele.default_value}">`;
-                        let field_div = `
-                        <div class="row">
-                            <label class="control-label col-xs-12 col-sm-3">${field}:</label>
-                            <div class="col-xs-12 col-sm-3">
-                                <input id="name_${field}" class="form-control customfield" name="name_${field}" type="text" value="${ele.name}">
-                            </div>
-                            <div class="col-xs-12 col-sm-2">
-                                `+default_value_html+`
-                            </div>
-                            <div class="col-xs-12 col-sm-2">
-                                <input type="checkbox" id="use_default_${field}" class="customfield" name="use_default_${field}" ${ele.use_default? "checked": ""}>
-                            </div>
-                            <div class="col-xs-12 col-sm-2">
-                                <input type="checkbox" id="hidden_${field}" class="customfield" name="hidden_${field}" ${ele.hidden? "checked": ""}>
-                            </div>
-                        </div>
-                        `;
-                        $("#fieldinfo").append(field_div);
-                    }
-                }
+
+                let fielddata = $("#c-fielddata").val();
+                let fielddataArr = fielddata? JSON.parse(fielddata): [];
+                fielddataArr.sort((a, b) => a.sort_num-b.sort_num);
+                console.log('fielddataArr', fielddataArr);
+                
+                fielddataArr.forEach(ele => {
+                    let default_value_html = (ele.field.split('-').pop()=='checkbox')
+                    ? `<input id="default_value_${ele.field}" class="customfield" name="default_value_${ele.field}" type="checkbox" ${ele.default_value? "checked": ""} >`
+                    : `<input id="default_value_${ele.field}" class="form-control customfield" name="default_value_${ele.field}" type="text" value="${ele.default_value}">`;
+                    let field_div = `
+                    <div class="row">
+                    <label class="control-label col-xs-12 col-sm-2">${ele.field}:</label>
+                    <div class="col-xs-12 col-sm-2">
+                        <input id="name_${ele.field}" class="form-control customfield" name="name_${ele.field}" type="text" value="${ele.name}">
+                    </div>
+                    <div class="col-xs-12 col-sm-2">
+                        `+default_value_html+`
+                    </div>
+                    <div class="col-xs-12 col-sm-2">
+                        <input type="checkbox" id="use_default_${ele.field}" class="customfield" name="use_default_${ele.field}" ${ele.use_default? "checked": ""}>
+                    </div>
+                    <div class="col-xs-12 col-sm-2">
+                        <input type="checkbox" id="hidden_${ele.field}" class="customfield" name="hidden_${ele.field}" ${ele.hidden? "checked": ""}>
+                    </div>
+                    <div class="col-xs-12 col-sm-2">
+                        <input type="text" id="sort_num_${ele.field}" class="form-control customfield" name="sort_num_${ele.field}" value="${ele.sort_num}">
+                    </div>
+                    </div>
+                    `;
+                    $("#fieldinfo").append(field_div);
+                })
                 
             },
             setDownFielddata: () => {
                 let fielddata = $("#c-fielddata").val();
-                let fielddataObj = fielddata? JSON.parse(fielddata): {};
-                for (const field in fielddataObj) {
-                    if (Object.hasOwnProperty.call(fielddataObj, field)) {
-                       
-                        const ele = fielddataObj[field];
-                        ele.name=$('#name_'+field).val();
-                        ele.default_value=(field.split('-').pop()=='checkbox')? $('#default_value_'+field).is(':checked'): $('#default_value_'+field).val();
-                        ele.use_default=$('#use_default_'+field).is(':checked');
-                        ele.hidden=$('#hidden_'+field).prop('checked');
-                        console.log(ele.hidden, $('#hidden'+field).is(':checked'));
-                    }
-                }
-                $("#c-fielddata").prop('value', JSON.stringify(fielddataObj));
+                let fielddataArr = fielddata? JSON.parse(fielddata): [];
+                fielddataArr.forEach(ele => {
+                    let field = ele.field;
+                    ele.name=$('#name_'+field).val();
+                    ele.default_value=(field.split('-').pop()=='checkbox')? $('#default_value_'+field).is(':checked'): $('#default_value_'+field).val();
+                    ele.use_default=$('#use_default_'+field).is(':checked');
+                    ele.hidden=$('#hidden_'+field).is(':checked');
+                    ele.sort_num = $('#sort_num_'+field).val();
+                })
+                $("#c-fielddata").prop('value', JSON.stringify(fielddataArr));
                 $('#fieldTop').hide();
                 $("#fieldinfo").hide();
                 $("#fieldinfo").empty();
