@@ -77,9 +77,7 @@ class Usertemp extends Backend
         if(!$row){
             $this->error("不存在该条记录");
         }
-        $temp = $this->tempModel->where('id', $row['temp_id'])->find();
 
-        $this->assignconfig("temp",$temp);
         $this->assignconfig("row",$row);
         $this->assignconfig("ids",$ids);
         return $this->view->fetch();
