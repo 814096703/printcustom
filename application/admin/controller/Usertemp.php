@@ -70,8 +70,6 @@ class Usertemp extends Backend
         return $this->view->fetch();
     }
 
-
-
     public function print($ids){
         $row = $this->model->get($ids);
         if(!$row){
@@ -88,12 +86,14 @@ class Usertemp extends Backend
         # code...
         if($this->request->isPost()){
             $id = $this->request->post("id");
-            $data = $this->request->post("data");
+            $fielddata = $this->request->post("fielddata");
+            $tempdata = $this->request->post("tempdata");
             $row = $this->model->get($id);
             if(!$row){
                 $this->error("不存在该条记录");
             }
-            $row['default_data'] = $data;
+            $row['fielddata'] = $fielddata;
+            $row['tempdata'] = $tempdata;
             $result = $row->save();
             if ($result !== false) {
                 $this->success('保存成功！');

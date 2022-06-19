@@ -36,7 +36,11 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','hpbundle'], function 
                     [
                         {checkbox: true},
                         {field: 'overdue_days', title: '可用天数', operate:'RANGE'},
+                        // {
+                        //     field: 'buttons',
+                        //     title: '续期',
 
+                        // }
                         {field: 'name', title: '模板名称', operate:'RANGE'},
                         {field: 'exa_image', title: '模板图片', operate: false, events: Table.api.events.image, formatter: Table.api.formatter.image},
                         {field: 'admin_name', title: '创建人'},
@@ -58,14 +62,15 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','hpbundle'], function 
                                     title: '购买续期',
                                     classname: 'btn btn-xs btn-primary btn-dialog',
                                     icon: 'fa fa-underline',
-                                    url: 'usertemp/print',
-                                    
+                                    // url: 'http://www.baidu.com',
+                                    events: function(event, value, row, index){
+                                        window.open(row['shop_link'], '_blank');
+                                    },
                                     visible: function (row) {
                                         //返回true时按钮显示,返回false隐藏
                                         return true;
                                     }
                                 },
-                                
                                
                             ],
                             formatter: Table.api.formatter.buttons
@@ -150,10 +155,18 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','hpbundle'], function 
             const tempdata = JSON.parse(row.tempdata);
             const fielddata = JSON.parse(row.fielddata);
             const printElements = tempdata.panels[0]['printElements'];
+            // 根据默认值初始化数据
+            let data_tmp = {};
+            fielddata.forEach(ele=>{
+                if(ele.field.split('-').pop()=='checkbox'){
+                    data_tmp[ele.field] = ele.use_default? (ele.default_value? "√": ""): "";
+                }else{
+                    data_tmp[ele.field] = ele.use_default?ele.default_value: "";
+                }
+            })
 
             // 展示字段信息
             window.showFieldInfo=(field)=>{
-                // console.log('fieldInfo', fieldInfo);
                 let ele = fielddata.find(e=>e.field==field)
                 $("#fieldinfo").empty();
                 let headDiv = `
@@ -168,209 +181,284 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','hpbundle'], function 
                 let default_value_html = (ele.field.split('-').pop()=='checkbox')
                     ? `<input id="default_value_${ele.field}" class="customfield" name="default_value_${ele.field}" type="checkbox" ${ele.default_value? "checked": ""} >`
                     : `<input id="default_value_${ele.field}" class="form-control customfield" name="default_value_${ele.field}" type="text" value="${ele.default_value}">`;
-                let field_div = `
-                <div class="row">
-                    <div class="col-xs-12 col-sm-3">
-                        <label style="text-align: left;">${ele.name}</label> 
-                       
-                    </div>
-                    <div class="col-xs-12 col-sm-3">
-                        `+default_value_html+`
-                    </div>
-                    <div class="col-xs-12 col-sm-3">
-                        <input type="checkbox" id="use_default_${ele.field}" class="customfield" name="use_default_${ele.field}" ${ele.use_default? "checked": ""}>
-                    </div>
-                    <div class="col-xs-12 col-sm-3">
-                        <input type="checkbox" id="hidden_${ele.field}" class="customfield" name="hidden_${ele.field}" ${ele.hidden? "checked": ""}>
-                    </div>
-               
-                </div>
-                `;
+                let field_div = `<div class="row">
+                                    <div class="col-xs-12 col-sm-3">
+                                        <label style="text-align: left;">${ele.name}</label> 
+                                    
+                                    </div>
+                                    <div class="col-xs-12 col-sm-3">
+                                        `+default_value_html+`
+                                    </div>
+                                    <div class="col-xs-12 col-sm-3">
+                                        <input type="checkbox" id="use_default_${ele.field}" class="customfield" name="use_default_${ele.field}" ${ele.use_default? "checked": ""}>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-3">
+                                        <input type="checkbox" id="hidden_${ele.field}" class="customfield" name="hidden_${ele.field}" ${ele.hidden? "checked": ""}>
+                                    </div>
+                            
+                                </div>`;
                 $("#fieldinfo").append(field_div);
 
                 let printElement = printElements.find(e=>e.options.field==field);
-                console.log('printElement', printElement);
+                
                 let cssDiv = `
                 <hr/>
                 <div class="row">
                     <label class="control-label col-xs-12 col-sm-4" style="text-align: right;">宽度</label>
                     <div class="col-xs-12 col-sm-4">
-                        <input type="text" class="customfield" value='${printElement.options.width}' }>
+                        <input type="text" id="css_width" class="customfield" value='${printElement.options.width}' }>
                     </div>
                 </div> 
                 <div class="row">
                     <label class="control-label col-xs-12 col-sm-4" style="text-align: right;">水平位置</label>
                     <div class="col-xs-12 col-sm-4">
-                        <input type="text" class="customfield" value='${printElement.options.left}' }>
+                        <input type="text" id="css_left" class="customfield" value='${printElement.options.left}' }>
                     </div>
                 </div>
                 <div class="row">
                     <label class="control-label col-xs-12 col-sm-4" style="text-align: right;">垂直位置</label>
                     <div class="col-xs-12 col-sm-4">
-                        <input type="text" class="customfield" value='${printElement.options.top}' }>
+                        <input type="text" id="css_top" class="customfield" value='${printElement.options.top}' }>
                     </div>
                 </div>
                 <div class="row">
                     <label class="control-label col-xs-12 col-sm-4" style="text-align: right;">字体大小</label>
                     <div class="col-xs-12 col-sm-4">
-                        <input type="text" class="customfield" value='${printElement.options.fontSize}' }>
+                        <input type="text" id="css_fontSize" class="customfield" value='${printElement.options.fontSize}' }>
                     </div>
                 </div>
                 <div class="row">
                     <label class="control-label col-xs-12 col-sm-4" style="text-align: right;">字体</label>
                     <div class="col-xs-12 col-sm-4">
-                        <input type="text" class="customfield" value='${printElement.options.fontFamily}' }>
+                        <input type="text" id="css_fontFamily" class="customfield" value='${printElement.options.fontFamily?printElement.options.fontFamily:""}' }>
                     </div>
                 </div>
                 `;
                 $("#fieldinfo").append(cssDiv);
+
+                let buttonDiv = `
+                <hr/>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12" style="text-align: center">
+                        <a id="btn_ok" class="btn btn-warning" href="#" role="button" onclick="updateTemp('${field}')">修改</a>
+                        <a id="btn_pre" class="btn btn-warning" href="#" role="button" onclick="preTemp()">预览</a>
+                        <a id="btn_cancle" class="btn btn-warning" href="#" role="button" onclick="editTemp()">编辑</a>
+                    </div>
+                    
+                </div>
+                `;
+                $("#fieldinfo").append(buttonDiv);
+
             }
 
-            let tempdataForInput = JSON.parse(row.tempdata);
-            let printElementsForInput = printElements.map(ele=>{
-                let field = ele['options']['field'];
-                if(ele['printElementType']['type']=='text'){
+            // 替换可编辑的字段为input
+            const transPrintElements = () => {
+                let printElementsForInput = JSON.parse(JSON.stringify(printElements)).map(ele=>{
+                    let field = ele['options']['field'];
+                    let fieldOpt = fielddata.find(e=>e.field==field);
                     
-                    // let fieldInfo = JSON.stringify(fielddata.find(e=>e.field==field));
-                    // console.log('fieldInfo', fieldInfo);
-                    if(field.split('-').pop()=='checkbox'){
-                        ele['printElementType']['formatter'] = (title,value,options,templateData,target)=>{ 
-                            return `<input type="checkbox" id="input_${options.field}" name="${options.field}" style="width: ${options.width}pt;" ${value? 'checked': ''} onfocus=showFieldInfo('${field}')>`;
+                    // 存在field可编辑，不是非打印数据，没有选择隐藏
+                    // if(field!=undefined && field.split('-').pop()!='nonprinting' && !fieldOpt.hidden){
+                    if(field.split('-').pop()!='nonprinting' && fieldOpt && !fieldOpt.hidden){
+                        if(field.split('-').pop()=='checkbox'){
+                            ele['printElementType']['formatter'] = (title,value,options,templateData,target)=>{ 
+                                return `<input type="checkbox" id="input_${options.field}" name="${options.field}" style="width: ${options.width}pt;" ${value? 'checked': ''} onfocus=showFieldInfo('${field}') onblur='changeDataTmp()'>`;
+                            }
+                            
+                        }else{
+                            ele['printElementType']['formatter'] = (title,value,options,templateData,target)=>{ 
+                                return `<input type="text" id="input_${options.field}" name="${options.field}" style="width: ${options.width}pt; border-style: none;" value="${value}" onfocus=showFieldInfo('${field}') onblur='changeDataTmp()'>`;
+                            }
                         }
                         
-                    }else{
-                        ele['printElementType']['formatter'] = (title,value,options,templateData,target)=>{ 
-                            return `<input type="text" id="input_${options.field}" name="${options.field}" style="width: ${options.width}pt; border-style: none;" value="${value}" onfocus=showFieldInfo('${field}')>`;
-                        }
                     }
-                    
-                }
-
-                return ele;
-            });
-
-            tempdataForInput.panels[0]['printElements']=printElementsForInput;
-
-            let data_tmp = {};
-            fielddata.forEach(ele=>{
-                if(ele.field.split('-').pop()=='checkbox'){
-                    data_tmp[ele.field] = ele.use_default? (ele.default_value? "√": ""): "";
-                }else{
-                    data_tmp[ele.field] = ele.use_default?ele.default_value: "";
-                }
+    
+                    return ele;
+                });
                 
-            })
+                return printElementsForInput;
+            }
+            let printElementsForInput = transPrintElements();
             
             
-            
-            // let fielddataObj = JSON.parse(temp['fielddata']);
-            // let defaultdataObj = JSON.parse(row['default_data']);
             hiprint.init();
             //初始化模板
-            let htempForInput =  new hiprint.PrintTemplate({template: tempdataForInput});
+            tempdata.panels[0]['printElements']=printElementsForInput;
+            let htempForInput =  new hiprint.PrintTemplate({template: tempdata});
+
+            tempdata.panels[0]['printElements']=printElements;
+            let htempForPrint = new hiprint.PrintTemplate({template: tempdata});
 
             $('#p_mx1').html(htempForInput.getHtml(data_tmp));
 
             $("#handleprintmx1").click(function(){
-               
-                let htempForPrint = new hiprint.PrintTemplate({template: tempdata});
-                
                 htempForPrint.print(data_tmp);
-                
             });
 
-            // 字段开始
-            // let tmp_data = {};
-            // const changePrintField = () => {
-            //     eleArr.forEach((ele) => {
-            //         ele = ele['options'];
-            //         if(Object.hasOwnProperty.call(ele, 'field')){
-            //             tmp_data[ele.field] = $("#field_"+ele.field).val();
-            //         }
-            //     })
-            //     $('#p_mx1').html(htemp.getHtml(tmp_data));
-            // }
-
-            // let eleArr = tempdataObj? tempdataObj['panels'][0]['printElements']:[];
-            
-            // eleArr.forEach(ele => {
-            //     ele = ele['options'];
-            //     if(Object.hasOwnProperty.call(ele, 'field')){
-            //         let title = ele.field;
-            //         let value = ele['src'] || ele['testData'] || '';
-            //         if(Object.hasOwnProperty.call(fielddataObj, ele.field)){
-            //             title = fielddataObj[ele.field];
-            //         }
-                    
-            //         if(Object.hasOwnProperty.call(defaultdataObj, ele.field)){
-            //             value = defaultdataObj[ele.field];
-            //         }
-                    
-            //         let field_div = `
-            //             <label class="control-label col-xs-12 col-sm-2" style="margin:5px 0px">${title}:</label>
-            //             <div class="col-xs-12 col-sm-4" style="margin:2px 0px">
-            //                 <input id="field_${ele.field}" class="form-control print_field" name="field_${ele.field}" type="text" value="${value}">
-            //             </div>
-            //         `;
-                    
-            //         $("#fieldinfo").append(field_div);
-            //         changePrintField();
-            //     }
-            // });
-            // console.log('tmp_data', tmp_data);
-            // const saveprintlog = () => {
-            //     $.ajax({
-            //         async: true,
-            //         type: "POST",
-            //         url:"printlog/add",
-            //         data: {
-            //             'row[temp_id]': temp['id'],
-            //             'row[temp_data]': JSON.stringify(tmp_data)
-            //         },
-            //         success: function (ret) {
-            //             if(ret.code ==1){
-            //                 layer.msg(ret.msg);
-            //             }else layer.msg(ret.msg);
-                        
-            //         }, error: function (e) {
-            //             Backend.api.toastr.error(e.message);
-            //         }
-            //     });
-            // }
-            
-            // $(".print_field").change(changePrintField);
-            // $("#handleprintmx1").click(function(){
-            //     saveprintlog();
-            //     filterArr = eleArr.filter((e) => {
-            //         if(!Object.hasOwnProperty.call(e['options'], 'field') || e['options']['field'].split('-').pop()!=='nonprinting'){
-            //             return e;
-            //         }
-            //     });
-            //     tempdataObj['panels'][0]['printElements'] = filterArr;
-            //     let print_htemp = new hiprint.PrintTemplate({template: tempdataObj});
-            //     console.log('print_htemp', print_htemp);
-            //     print_htemp.print(tmp_data);
+            $('#setFielddata').click(() => {
+                setFielddata();
+            })
+            // 更新模板数据
+            window.updateTemp=(field) => {
                 
-            // });
-            // $('#savedefaultdata').click(() => {
-            //     $.ajax({
-            //         async: false,
-            //         type: "POST",
-            //         url:"usertemp/savedefaultdata",
-            //         data: {
-            //             id: Config.ids,
-            //             data: JSON.stringify(tmp_data)
-            //         },
-            //         success: function (ret) {
-            //             if(ret.code ==1){
-            //                 layer.msg(ret.msg);
-            //             }else layer.msg(ret.msg);
+                printElements.forEach(ele=>{
+                    if(ele.options.field==field){
+                        ele.options.width = Number($('#css_width').val())
+                        ele.options.left = Number($('#css_left').val())
+                        ele.options.top = Number($('#css_top').val())
+                        ele.options.fontSize = Number($('#css_fontSize').val())
+                    }
+                })
+                // printElementsForInput.forEach(ele=>{
+                //     if(ele.options.field==field){
+                //         ele.options.width = Number($('#css_width').val())
+                //         ele.options.left = Number($('#css_left').val())
+                //         ele.options.top = Number($('#css_top').val())
+                //         ele.options.fontSize = Number($('#css_fontSize').val())
+                //     }
+                // })
+                fielddata.forEach(ele => {
+                    if(ele.field==field){
+                        let field = ele.field;
+                        ele.default_value=(field.split('-').pop()=='checkbox')? $('#default_value_'+field).is(':checked'): $('#default_value_'+field).val();
+                        ele.use_default=$('#use_default_'+field).is(':checked');
+                        ele.hidden=$('#hidden_'+field).is(':checked');
+                    }
+                })
+
+                printElementsForInput = transPrintElements();
+                
+                editTemp();
+
+                $.ajax({
+                    async: false,
+                    type: "POST",
+                    url:"usertemp/savedefaultdata",
+                    data: {
+                        id: Config.ids,
+                        tempdata: JSON.stringify(tempdata),
+                        fielddata: JSON.stringify(fielddata)
+                    },
+                    success: function (ret) {
+                        if(ret.code ==1){
+                            layer.msg(ret.msg);
+                        }else layer.msg(ret.msg);
                         
-            //         }, error: function (e) {
-            //             Backend.api.toastr.error(e.message);
-            //         }
-            //     });
-            // })
+                    }, error: function (e) {
+                        Backend.api.toastr.error(e.message);
+                    }
+                });
+               
+            }
+            // 修改打印数据
+            window.changeDataTmp=() => {
+                for (const field in data_tmp) {
+                    
+                    if (field.split('-').pop()!='nonprinting') {
+                        data_tmp[field] = (field.split('-').pop()=='checkbox')
+                                        ? ($('#input_'+field).is(':checked')? "√": "")
+                                        : $('#input_'+field).val();
+                    }
+                }
+            }
+            // 预览模板
+            window.preTemp= () => {
+                tempdata.panels[0]['printElements']=printElements;
+                let htempForInput =  new hiprint.PrintTemplate({template: tempdata});
+                $('#p_mx1').html(htempForInput.getHtml(data_tmp));
+            }
+            // 编辑模板
+            window.editTemp= () => {
+                tempdata.panels[0]['printElements']=printElementsForInput;
+                let htempForInput =  new hiprint.PrintTemplate({template: tempdata});
+                $('#p_mx1').html(htempForInput.getHtml(data_tmp));
+            }
+
+            // 设置全部模板字段
+            window.setFielddata= () => {
+                $("#fieldinfo").empty();
+                
+                let headDiv = `
+                <div class="row">
+                    <label class="control-label col-xs-12 col-sm-2" style="text-align: left;">组件名</label>
+                    <label class="control-label col-xs-12 col-sm-4" style="text-align: left;">默认值</label>
+                    <label class="control-label col-xs-12 col-sm-2" style="text-align: left;">使用默认值</label>
+                    <label class="control-label col-xs-12 col-sm-2" style="text-align: left;">隐藏</label> 
+                    <label class="control-label col-xs-12 col-sm-2" style="text-align: left;">排序</label> 
+                </div> 
+                `;
+                $("#fieldinfo").append(headDiv);
+
+                fielddata.sort((a, b) => a.sort_num-b.sort_num);
+                
+                fielddata.forEach(ele => {
+                    let default_value_html = (ele.field.split('-').pop()=='checkbox')
+                    ? `<input id="default_value_${ele.field}" class="customfield" name="default_value_${ele.field}" type="checkbox" ${ele.default_value? "checked": ""} >`
+                    : `<input id="default_value_${ele.field}" class="form-control customfield" name="default_value_${ele.field}" type="text" value="${ele.default_value}">`;
+                    let field_div = `
+                    <div class="row">
+                    <label class="control-label col-xs-12 col-sm-2">${ele.name}:</label>
+                    
+                    <div class="col-xs-12 col-sm-4">
+                        `+default_value_html+`
+                    </div>
+                    <div class="col-xs-12 col-sm-2">
+                        <input type="checkbox" id="use_default_${ele.field}" class="customfield" name="use_default_${ele.field}" ${ele.use_default? "checked": ""}>
+                    </div>
+                    <div class="col-xs-12 col-sm-2">
+                        <input type="checkbox" id="hidden_${ele.field}" class="customfield" name="hidden_${ele.field}" ${ele.hidden? "checked": ""}>
+                    </div>
+                    <div class="col-xs-12 col-sm-2">
+                        <input type="text" id="sort_num_${ele.field}" class="form-control customfield" name="sort_num_${ele.field}" value="${ele.sort_num}">
+                    </div>
+                    </div>
+                    `;
+                    $("#fieldinfo").append(field_div);
+                })
+                let buttonDiv = `
+                <hr/>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12" style="text-align: center">
+                        <a id="btn_ok" class="btn btn-warning" href="#" role="button" onclick="saveFielddata()">保存</a>
+                    </div>
+                    
+                </div>
+                `;
+                $("#fieldinfo").append(buttonDiv);
+                
+            }
+            
+            // 保存模板字段
+            window.saveFielddata= () => {
+                
+                fielddata.forEach(ele => {
+                    let field = ele.field;
+                    ele.default_value=(field.split('-').pop()=='checkbox')? $('#default_value_'+field).is(':checked'): $('#default_value_'+field).val();
+                    ele.use_default=$('#use_default_'+field).is(':checked');
+                    ele.hidden=$('#hidden_'+field).is(':checked');
+                    ele.sort_num = $('#sort_num_'+field).val();
+                })
+                printElementsForInput = transPrintElements();
+                editTemp();
+                $.ajax({
+                    async: false,
+                    type: "POST",
+                    url:"usertemp/savedefaultdata",
+                    data: {
+                        id: Config.ids,
+                        tempdata: JSON.stringify(tempdata),
+                        fielddata: JSON.stringify(fielddata)
+                    },
+                    success: function (ret) {
+                        if(ret.code ==1){
+                            layer.msg(ret.msg);
+                        }else layer.msg(ret.msg);
+                        
+                    }, error: function (e) {
+                        Backend.api.toastr.error(e.message);
+                    }
+                });
+            }
             Controller.api.bindevent();
         },
         api: {
