@@ -36,11 +36,13 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','hpbundle'], function 
                     [
                         {checkbox: true},
                         {field: 'overdue_days', title: '可用天数', operate:'RANGE'},
-                        // {
-                        //     field: 'buttons',
-                        //     title: '续期',
-
-                        // }
+                        {
+                            field: 'shop_link',
+                            title: '续期',
+                            formatter:(value, row, index) => {
+                                return `<a href="${value}" target="_blank">去购买</a>`;
+                            }
+                        },
                         {field: 'name', title: '模板名称', operate:'RANGE'},
                         {field: 'exa_image', title: '模板图片', operate: false, events: Table.api.events.image, formatter: Table.api.formatter.image},
                         {field: 'admin_name', title: '创建人'},
@@ -49,32 +51,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','hpbundle'], function 
                         {field: 'default_data', title: __('Default_data'),visible: false},
                         // {field: 'updatetime', title: __('Updatetime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate},
-                        {
-                            field: 'buttons',
-                            width: "120px",
-                            title: __('按钮组'),
-                            table: table,
-                            events: Table.api.events.operate,
-                            buttons: [
-                                {
-                                    name: 'print',
-                                    text: '购买续期',
-                                    title: '购买续期',
-                                    classname: 'btn btn-xs btn-primary btn-dialog',
-                                    icon: 'fa fa-underline',
-                                    // url: 'http://www.baidu.com',
-                                    events: function(event, value, row, index){
-                                        window.open(row['shop_link'], '_blank');
-                                    },
-                                    visible: function (row) {
-                                        //返回true时按钮显示,返回false隐藏
-                                        return true;
-                                    }
-                                },
-                               
-                            ],
-                            formatter: Table.api.formatter.buttons
-                        }
+                        
                     ]
                 ]
             });
