@@ -286,12 +286,18 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','hpbundle'], function 
             tempdata.panels[0]['printElements']=printElementsForInput;
             let htempForInput =  new hiprint.PrintTemplate({template: tempdata});
 
-            tempdata.panels[0]['printElements']=printElements;
-            let htempForPrint = new hiprint.PrintTemplate({template: tempdata});
+            // tempdata.panels[0]['printElements']=printElements;
+            // let htempForPrint = new hiprint.PrintTemplate({template: tempdata});
 
             $('#p_mx1').html(htempForInput.getHtml(data_tmp));
 
             $("#handleprintmx1").click(function(){
+                tempdata.panels[0]['printElements'] = printElements.filter((e) => {
+                    if(!Object.hasOwnProperty.call(e['options'], 'field') || e['options']['field'].split('-').pop()!=='nonprinting'){
+                        return e;
+                    }
+                })
+                let htempForPrint = new hiprint.PrintTemplate({template: tempdata});
                 htempForPrint.print(data_tmp);
             });
 
