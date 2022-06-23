@@ -41,7 +41,8 @@ class Printlog extends Backend
             }
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
             $list = $this->model->alias("m")
-                ->join(["fa_temple"=>"t"],"t.id = m.temp_id")
+                ->join(["fa_usertemp"=>"ut"],"ut.id = m.temp_id")
+                ->join(["fa_temple"=>"t"],"t.id = ut.temp_id")
                 ->join(["fa_admin"=>"admin"],"admin.id = m.print_admin_id")
                 ->field("m.*, t.name, t.exa_image, admin.username admin_name")
                 ->where($where)

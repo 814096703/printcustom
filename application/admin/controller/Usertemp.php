@@ -102,7 +102,27 @@ class Usertemp extends Backend
             }
         }
         
+    }
 
+    public function savedatatmp()
+    {
+        if($this->request->isPost()){
+            $id = $this->request->post("id");
+            $fielddata = $this->request->post("fielddata");
+            $tempdata = $this->request->post("tempdata");
+            $row = $this->model->get($id);
+            if(!$row){
+                $this->error("不存在该条记录");
+            }
+            $row['fielddata'] = $fielddata;
+            $row['tempdata'] = $tempdata;
+            $result = $row->save();
+            if ($result !== false) {
+                $this->success('保存成功！');
+            } else {
+                $this->error('保存出错');
+            }
+        }
     }
 
 

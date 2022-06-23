@@ -263,10 +263,28 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','hpbundle'], function 
             tempdata.panels[0]['printElements']=printElementsForInput;
             let htempForInput =  new hiprint.PrintTemplate({template: tempdata});
 
-            // tempdata.panels[0]['printElements']=printElements;
-            // let htempForPrint = new hiprint.PrintTemplate({template: tempdata});
-
             $('#p_mx1').html(htempForInput.getHtml(data_tmp));
+
+            // 保存打印数据
+            const saveprintlog = () => {
+                $.ajax({
+                    async: true,
+                    type: "POST",
+                    url:"printlog/add",
+                    data: {
+                        'row[temp_id]': row['id'],
+                        'row[temp_data]': JSON.stringify(data_tmp)
+                    },
+                    success: function (ret) {
+                        if(ret.code ==1){
+                            layer.msg(ret.msg);
+                        }else layer.msg(ret.msg);
+                        
+                    }, error: function (e) {
+                        Backend.api.toastr.error(e.message);
+                    }
+                });
+            }
 
             $("#handleprintmx1").click(function(){
                 tempdata.panels[0]['printElements'] = printElements.filter((e) => {
@@ -275,12 +293,16 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','hpbundle'], function 
                     }
                 })
                 let htempForPrint = new hiprint.PrintTemplate({template: tempdata});
+                saveprintlog();
                 htempForPrint.print(data_tmp);
             });
 
             $('#setFielddata').click(() => {
                 setFielddata();
             })
+
+            
+
             // 更新模板数据
             window.updateTemp=(field) => {
                 
@@ -442,6 +464,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','hpbundle'], function 
                     }
                 });
             }
+            
             Controller.api.bindevent();
         },
         api: {

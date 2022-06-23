@@ -418,6 +418,7 @@ define(['jquery', 'bootstrap', 'backend', 'addtabs', 'adminlte', 'form'], functi
             });
         },
         regist: function () {
+            // console.log('456', 4456);
             window.back = () => {
                 window.location.href='login';
             }

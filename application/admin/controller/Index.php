@@ -148,6 +148,7 @@ class Index extends Backend
                     if (!Validate::is($params['password'], '\S{6,30}')) {
                         exception(__("Please input correct password"));
                     }
+                    $params['nickname'] = $params['username'];
                     $params['salt'] = Random::alnum();
                     $params['password'] = md5(md5($params['password']) . $params['salt']);
                     $params['avatar'] = '/assets/img/avatar.png'; //设置新管理员默认头像。
