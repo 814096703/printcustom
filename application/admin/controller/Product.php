@@ -144,7 +144,8 @@ class Product extends Backend
                     'fielddata'=>$temp['fielddata'],
                     'purchaselog_id'=>$lastlog['id'],
                     'overdue_days'=>$product['overdue_days'],
-                    'shop_link'=>$product['shop_link']
+                    'shop_link'=>$product['shop_link'],
+                    'overdue_date'=>date('Y-m-d H:i:s',strtotime('+'.$product['overdue_days'].' day'))
                 ];
                 $result = $this->userTempModel->allowField(true)->save($usertemp);
                 if ($result) {
@@ -221,7 +222,8 @@ class Product extends Backend
             'fielddata'=>$temp['fielddata'],
             'purchaselog_id'=>$lastlog['id'],
             'overdue_days'=>$product['overdue_days'],
-            'shop_link'=>$product['shop_link']
+            'shop_link'=>$product['shop_link'],
+            'overdue_date'=>date('Y-m-d H:i:s',strtotime('+'.$product['overdue_days'].' day'))
         ];
         $result = $this->userTempModel->allowField(true)->save($usertemp);
         if ($result) {

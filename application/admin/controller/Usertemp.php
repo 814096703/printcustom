@@ -75,6 +75,9 @@ class Usertemp extends Backend
         if(!$row){
             $this->error("不存在该条记录");
         }
+        if(strtotime($row['overdue_date'])<strtotime(date('Y-m-d H:i:s'))){
+            $this->error('模板使用时间已到期，请续期后使用');
+        }
 
         $this->assignconfig("row",$row);
         $this->assignconfig("ids",$ids);

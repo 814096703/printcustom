@@ -35,7 +35,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','hpbundle'], function 
                 columns: [
                     [
                         {checkbox: true},
-                        {field: 'overdue_days', title: '可用天数', operate:'RANGE'},
+                        {field: 'overdue_date', title: '到期时间', operate:'RANGE'},
                         {
                             field: 'shop_link',
                             title: '续期',
