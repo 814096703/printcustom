@@ -148,6 +148,7 @@ class Index extends Backend
                     if (!Validate::is($params['password'], '\S{6,30}')) {
                         exception(__("Please input correct password"));
                     }
+                    $params['email'] = time()."@test.com";
                     $params['nickname'] = $params['username'];
                     $params['salt'] = Random::alnum();
                     $params['password'] = md5(md5($params['password']) . $params['salt']);
