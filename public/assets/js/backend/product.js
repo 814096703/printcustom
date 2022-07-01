@@ -79,7 +79,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
                                 data_tmp[ele.field] = ele.use_default?ele.default_value: "";
                             }
                         })
-                        console.log('data_tmp', data_tmp);
+                        // console.log('data_tmp', data_tmp);
                     
                         $("#A4_printByHtml").click(function(){
                             htemp.print(data_tmp);

@@ -32,6 +32,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
                         {field: 'exa_image', title: __('Exa_image'), operate: false, events: Table.api.events.image, formatter: Table.api.formatter.image},
                         {field: 'memo', title: __('Memo'), operate: 'LIKE'},
                         {field: 'design_admin_id', title: __('Admin_id')},
+                        {field: 'is_shelves', title: __('是否上架'), searchList: {1: __('已上架'), 0:__('未上架')}, formatter: Table.api.formatter.status},
                         {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false},
                         {field: 'updatetime', title: __('Updatetime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}

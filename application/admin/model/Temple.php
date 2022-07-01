@@ -29,7 +29,10 @@ class Temple extends Model
 
     ];
     
-
+    public function getStatusList()
+    {
+        return [1 => __('已上架'), 0 => __('未上架')];
+    }
     
 
 
