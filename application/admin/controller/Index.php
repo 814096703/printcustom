@@ -154,6 +154,7 @@ class Index extends Backend
                     $params['password'] = md5(md5($params['password']) . $params['salt']);
                     $params['avatar'] = '/assets/img/avatar.png'; //设置新管理员默认头像。
                     $params['status'] = 'normal';
+                    $params['pid'] = 1;
                     $result = model('Admin')->validate('Admin.add')->save($params);
                     if ($result === false) {
                         exception(model('Admin')->getError());
