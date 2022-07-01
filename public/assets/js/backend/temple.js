@@ -54,6 +54,15 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
                     }
                 });
             })
+            $("#btn-product").click(() => {
+                let ids = Table.api.selectedids(table);
+                window.top.Fast.api.open('product/add/ids/'+ (ids.length>0? ids[0]: ''), '上架', {
+                    callback: () => {
+                        table.bootstrapTable('refresh');
+                    }
+                });
+            })
+            
         },
         add: function () {
             Controller.api.bindevent();
