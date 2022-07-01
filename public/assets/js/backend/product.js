@@ -66,14 +66,25 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'hpbundle', 'customEl
                     success:function(result){
                         // console.log('res', result);
                         
-                        let tempdata = (result && result['tempdata'])? JSON.parse(result['tempdata']):{};
+                        let tempdata = (result && result['tempdata'])? JSON.parse(result['tempdata']): {};
+                        let fielddata = (result && result['fielddata'])? JSON.parse(result['fielddata']): [];
                         
                         let htemp = new hiprint.PrintTemplate({template: tempdata});
+
+                        let data_tmp = {};
+                        fielddata.forEach(ele=>{
+                            if(ele.field.split('-').pop()=='checkbox'){
+                                data_tmp[ele.field] = ele.use_default? (ele.default_value? "√": ""): "";
+                            }else{
+                                data_tmp[ele.field] = ele.use_default?ele.default_value: "";
+                            }
+                        })
+                        console.log('data_tmp', data_tmp);
                     
                         $("#A4_printByHtml").click(function(){
-                            htemp.print({});
+                            htemp.print(data_tmp);
                         });
-                        $('#myModal .modal-body .prevViewDiv').html(htemp.getHtml({}));
+                        $('#myModal .modal-body .prevViewDiv').html(htemp.getHtml(data_tmp));
                         
                         $('#myModal').modal('show')
                     
