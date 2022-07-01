@@ -90,10 +90,51 @@ class Temple extends Backend
 
     }
 
-    // public function add(Type $var = null)
-    // {
-    //     # code...
-    // }
+    /**
+     * 删除
+     */
+    public function del($ids = "")
+    {
+        if (!$this->request->isPost()) {
+            $this->error(__("Invalid parameters"));
+        }
+        $ids = $ids ? $ids : $this->request->post("ids");
+        if ($ids) {
+            $pk = $this->model->getPk();
+            $adminIds = $this->getDataLimitAdminIds();
+            if (is_array($adminIds)) {
+                $this->model->where($this->dataLimitField, 'in', $adminIds);
+            }
+            $list = $this->model->where($pk, 'in', $ids)->select();
+            foreach ($list as $k => $v) {
+                if($v['is_shelves']==1){
+                    $this->error(__('已上架，不能删除'));
+                }
+            }
+
+            $count = 0;
+            Db::startTrans();
+            try {
+                foreach ($list as $k => $v) {
+                    
+                    $count += $v->delete();
+                }
+                Db::commit();
+            } catch (PDOException $e) {
+                Db::rollback();
+                $this->error($e->getMessage());
+            } catch (Exception $e) {
+                Db::rollback();
+                $this->error($e->getMessage());
+            }
+            if ($count) {
+                $this->success();
+            } else {
+                $this->error(__('No rows were deleted'));
+            }
+        }
+        $this->error(__('Parameter %s can not be empty', 'ids'));
+    }
     /**
      * 默认生成的控制器所继承的父类中有index/add/edit/del/multi五个基础方法、destroy/restore/recyclebin三个回收站方法
      * 因此在当前控制器中可不用编写增删改查的代码,除非需要自己控制这部分逻辑
