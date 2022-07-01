@@ -29,7 +29,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'ispay', title: '订单状态', operate: 'LIKE', searchList: {1:__('支付完成'),0:__('待支付')}, formatter: Table.api.formatter.status },
                         {field: 'p_name', title: '商品', operate: 'LIKE'},
                         {field: 'purchase_price', title: '购买价格', operate:'BETWEEN'},
-                        {field: 'admin_name', title: '购买人', operate: 'LIKE'},
+                        {field: 'username', title: '购买人', operate: 'LIKE'},
                         {field: 'createtime', title: '购买时间', operate:'RANGE', addclass:'datetimerange', autocomplete:false},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]

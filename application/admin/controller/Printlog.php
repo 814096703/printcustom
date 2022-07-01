@@ -44,7 +44,7 @@ class Printlog extends Backend
                 ->join(["fa_usertemp"=>"ut"],"ut.id = m.temp_id")
                 ->join(["fa_temple"=>"t"],"t.id = ut.temp_id")
                 ->join(["fa_admin"=>"admin"],"admin.id = m.print_admin_id")
-                ->field("m.*, t.name, t.exa_image, admin.username admin_name")
+                ->field("m.*, t.name, t.exa_image, admin.username")
                 ->where($where)
                 ->order($sort, $order)
                 ->paginate($limit);

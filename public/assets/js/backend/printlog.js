@@ -27,7 +27,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {checkbox: true},
                         
                         {field: 'name', title: '模板'},
-                        {field: 'admin_name', title: '打印人'},
+                        {field: 'username', title: '打印人'},
                         {field: 'createtime', title: '打印时间', operate:'RANGE', addclass:'datetimerange', autocomplete:false},
                         
                         

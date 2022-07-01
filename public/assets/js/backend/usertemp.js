@@ -35,20 +35,21 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form','hpbundle'], function 
                 columns: [
                     [
                         {checkbox: true},
-                        {field: 'overdue_date', title: '到期时间', operate:'RANGE'},
+                        {field: 'overdue_date', title: '到期时间', operate:'RANGE', addclass:'datetimerange', autocomplete:false},
                         {
                             field: 'shop_link',
                             title: '续期',
+                            searchable: false,
                             formatter:(value, row, index) => {
                                 return `<a href="${value}" target="_blank">去购买</a>`;
                             }
                         },
                         {field: 'name', title: '模板名称', operate:'RANGE'},
                         {field: 'exa_image', title: '模板图片', operate: false, events: Table.api.events.image, formatter: Table.api.formatter.image},
-                        {field: 'admin_name', title: '创建人'},
+                        {field: 'username', title: '创建人'},
                         {field: 'createtime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false},
-                        {field: 'weigh', title: __('Weigh'), operate: false,visible: false},
-                        {field: 'default_data', title: __('Default_data'),visible: false},
+                        {field: 'weigh', title: __('Weigh'), operate: false,visible: false, searchable: false},
+                        {field: 'default_data', title: __('Default_data'),visible: false, searchable: false},
                         // {field: 'updatetime', title: __('Updatetime'), operate:'RANGE', addclass:'datetimerange', autocomplete:false},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate},
                         

@@ -44,7 +44,7 @@ class Userpurchaselog extends Backend
             $list = $this->model->alias("m")
                 ->join(["fa_product"=>"p"],"p.id = m.product_id", 'left')
                 ->join(["fa_admin"=>"admin"],"admin.id = m.admin_id")
-                ->field('m.*, p.p_name, admin.username admin_name')
+                ->field('m.*, p.p_name, admin.username')
                 ->where($where)
                 ->order($sort, $order)
                 ->paginate($limit);

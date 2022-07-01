@@ -56,7 +56,7 @@ class Usertemp extends Backend
             $list = $this->model->alias("m")
                 ->join(["fa_temple"=>"t"],"t.id = m.temp_id")
                 ->join(["fa_admin"=>"admin"],"admin.id = m.admin_id")
-                ->field("m.*, t.name, t.exa_image, admin.username admin_name")
+                ->field("m.*, t.name, t.exa_image, admin.username")
                 ->where($where)
                 // ->where('m.admin_id', '=', 1)
                 ->whereOr($whereOr)
